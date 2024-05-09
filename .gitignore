@@ -6,6 +6,9 @@ npm-debug.log
 
 # Ignore local configuration
 .env
+.env.development
+.env.test
+.env.production
 
 # Ignore production build output
 /build/
