@@ -5,20 +5,25 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.ts"
+    "start-dev": "cross-env NODE_ENV=development nodemon ./server.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "dotenv-flow": "^4.1.0",
     "express": "^4.19.2",
     "joi": "^17.13.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.2"
+    "mongoose": "^8.3.2",
+    "socket.io": "^4.7.5"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.11",
     "nodemon": "^3.1.0",
     "ts-node": "^10.9.2"
   }
