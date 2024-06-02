@@ -1,11 +1,11 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 // User interface
 export interface IUser {
   username: string;
   email: string;
   password: string;
-  role: 'admin' | 'leader' | 'user';
   createdAt?: Date;
+  updatedAt?: Date;
 }
 export interface UserDocument extends IUser, Document {}

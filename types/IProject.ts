@@ -1,15 +1,19 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+
+import { TeamMember } from './ITeamMember';
 
 // Project interface
 export interface IProject {
+  projectId: Types.ObjectId;
   name: string;
   description: string;
   startDate: Date;
   endDate: Date;
   allocatedHours: number;
-  teamMembers: string[]; // Array of User IDs
+  teamMembers: TeamMember[]; // Array of objects of User IDs with roles
   lists: string[]; // Array of List IDs
   createdAt?: Date; 
+  updatedAt?: Date;
 }
 
 export interface ProjectDocument extends IProject, Document {}

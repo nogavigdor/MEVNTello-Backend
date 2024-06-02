@@ -1,31 +1,39 @@
 import { Schema, model } from "mongoose";
-import { UserDocument } from "../types/user.interface";
-import Joi from "joi";
+import { UserDocument } from "../types/IUser";
+
 
 const userSchema = new Schema<UserDocument>(
   {
-    email: {
-      type: String,
-      required: [true, "Email is required"],
-      unique: true,
-      min: 6,
-      max: 255,
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  { timestamps: true }
-);
-
+    
+      username: {
+        type: String,
+        required: false,
+        minlength: 6,
+        maxlength: 255
+      },
+      email: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: 6,
+        maxlength: 255
+      },
+      password: {
+        type: String,
+        required: true,
+        minlength: 6,
+        maxlength: 255
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now
+      }
+    }
+    );
+    
+   
 export default model<UserDocument>("User", userSchema);
