@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { ProjectDocument } from '../types/IProject'; 
+import { ProjectDocument } from "../interfaces/Iproject";
 
 const projectSchema = new Schema<ProjectDocument>(
   {

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { ListDocument } from "../types/IList";
+import { ListDocument } from "../interfaces/IList";
 
 export const listSchema = new Schema<ListDocument>(
     {
