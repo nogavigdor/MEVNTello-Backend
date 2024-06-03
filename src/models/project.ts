@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { ProjectDocument } from "../interfaces/Iproject";
+import { ProjectDocument } from "../interfaces/IProject";
 
 const projectSchema = new Schema<ProjectDocument>(
   {
@@ -46,15 +46,7 @@ const projectSchema = new Schema<ProjectDocument>(
         type: Schema.Types.ObjectId,
         ref: "List",
       },
-    ],
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    updatedAt: {
-      type: Date,
-      default: Date.now,
-    },
+    ]
   },
   {
     timestamps: true,

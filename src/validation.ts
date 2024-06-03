@@ -1,11 +1,11 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { ProjectDocument } from './interfaces/Iproject';
+import { ProjectDocument } from './interfaces/IProject';
 import { ListDocument } from './interfaces/IList';
 import { TaskDocument } from './interfaces/ITask';
 import { UserDocument } from './interfaces/IUser';
-import { UserPayload } from './interfaces/IUserPayLoad'; 
+import { UserPayload } from './interfaces/IUserPayload';
 // Project Validation Schema
 const projectValidation = (data: ProjectDocument) => {
     const schema = Joi.object({
@@ -89,7 +89,7 @@ const loginValidation = (data: UserDocument) => {
 
 // Token Verification Middleware
 interface CustomRequest extends Request {
-    user: UserPayLoad;
+    user: UserPayload;
 }
 
 const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -97,7 +97,7 @@ const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
     if (!token) return res.status(401).json({ message: 'Access Denied' });
 
     try {
-        const verified = jwt.verify(token, process.env.TOKEN_SECRET as string) as UserPayLoad;;
+        const verified = jwt.verify(token, process.env.TOKEN_SECRET as string) as UserPayload;
         req.user = verified;
         next();
     } catch (err) {

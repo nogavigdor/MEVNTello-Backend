@@ -46,16 +46,11 @@ export const taskSchema = new Schema<TaskDocument>(
             name: String,
             completed: Boolean,
         },
-        ],
-        createdAt: {
-        type: Date,
-        default: Date.now,
-        },
-        updatedAt: {
-        type: Date,
-        default: Date.now,
-        },
+        ], // Add a closing curly brace here
     }
-    );
+,{
+        timestamps: true, // This correctly adds `createdAt` and `updatedAt` fields
+    }
+);
 
 export default model<TaskDocument>("Task", taskSchema);
