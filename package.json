@@ -1,14 +1,16 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend for the MEVN stack - MEVNTello - Trello like application - with Kanaban elements",
-  "main": "index.js",
+  "description": "Backend for the MEVN stack - MEVNTello - Trello/Kanaban like application - with Kanaban elements",
+  "main": "dist/server.js",
   "scripts": {
+    "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-dev": "cross-env NODE_ENV=development nodemon ./server.ts"
+    "start-dev": "cross-env NODE_ENV=development nodemon dist/server.js",
+    "dev": "npm run build && npm run start-dev"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["Trello", "Kanaban", "MEVN", "MEVNTello", "Backend", "Node.js", "Express.js", "MongoDB", "Mongoose", "Socket.io", "JWT", "Swagger", "YAML", "Joi", "Validator", "Bcrypt", "Cors", "Dotenv", "Dotenv-flow"],
+  "author": "Noga Vigdor",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -21,16 +23,23 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.2",
     "socket.io": "^4.7.5",
-    "validator": "^13.12.0"
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "validator": "^13.12.0",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/joi": "^17.2.3",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^20.14.0",
+    "@types/node": "^20.14.1",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
     "@types/validator": "^13.11.10",
     "cross-env": "^7.0.3",
     "nodemon": "^3.1.0",

@@ -7,7 +7,7 @@ const userSchema = new Schema<UserDocument>(
     
       username: {
         type: String,
-        required: false,
+        required: true,
         minlength: 6,
         maxlength: 255
       },

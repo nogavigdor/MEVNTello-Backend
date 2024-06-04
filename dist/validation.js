@@ -66,7 +66,7 @@ exports.taskValidation = taskValidation;
 const registerValidation = (data) => {
     const schema = joi_1.default.object({
         _id: joi_1.default.string().optional(),
-        name: joi_1.default.string().min(6).max(255).required(),
+        username: joi_1.default.string().min(6).max(255).required(),
         email: joi_1.default.string().min(6).max(255).required().email(),
         password: joi_1.default.string().min(6).max(255).required()
     });

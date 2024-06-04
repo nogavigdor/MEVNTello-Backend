@@ -35,6 +35,7 @@ const projectSchema = new mongoose_1.Schema({
                 required: true,
             },
             role: {
+                type: String,
                 enum: ['leader', 'member'],
                 required: true,
             },

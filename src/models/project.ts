@@ -36,6 +36,7 @@ const projectSchema = new Schema<ProjectDocument>(
                     required: true,
                 },
                 role: {
+                    type: String,
                     enum: ['leader', 'member'],
                     required: true,
                 },

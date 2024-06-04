@@ -80,7 +80,7 @@ const taskValidation = (data: TaskDocument) => {
 const registerValidation = (data: UserDocument) => {
     const schema = Joi.object({
         _id: Joi.string().optional(), 
-        name: Joi.string().min(6).max(255).required(),
+        username: Joi.string().min(6).max(255).required(),
         email: Joi.string().min(6).max(255).required().email(),
         password: Joi.string().min(6).max(255).required()
     });

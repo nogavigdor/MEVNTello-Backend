@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
     try {
         const savedUser = await new User(req.body).save();
         res.status(201).json({ user: savedUser._id });
-    } catch (err: any) { // Cast 'err' to 'any' type
+    } catch (err: any) { 
         res.status(400).json({ message: err.message });
     }
 });
