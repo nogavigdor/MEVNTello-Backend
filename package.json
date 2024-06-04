@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start-prod": "cross-env NODE_ENV=production nodemon dist/server.js",
+    "start-prod": "cross-env NODE_ENV=production node dist/server.js",
     "start-dev": "cross-env NODE_ENV=development nodemon dist/server.js",
     "dev": "npm run build && npm run start-dev",
     "prod": "npm run build && npm run start-prod",
