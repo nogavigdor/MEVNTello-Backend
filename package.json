@@ -8,7 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start-prod": "cross-env NODE_ENV=production nodemon dist/server.js",
     "start-dev": "cross-env NODE_ENV=development nodemon dist/server.js",
-    "dev": "npm run build && npm run start-dev"
+    "dev": "npm run build && npm run start-dev",
+    "prod": "npm run build && npm run start-prod",
+    "start": "node dist/server.js" 
   },
   "keywords": ["Trello", "Kanaban", "MEVN", "MEVNTello", "Backend", "Node.js", "Express.js", "MongoDB", "Mongoose", "Socket.io", "JWT", "Swagger", "YAML", "Joi", "Validator", "Bcrypt", "Cors", "Dotenv", "Dotenv-flow"],
   "author": "Noga Vigdor",
