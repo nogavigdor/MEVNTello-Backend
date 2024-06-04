@@ -47,7 +47,7 @@ const swaggerOptions = {
         url: "http://localhost:4000/api",
       },
       {
-        url: "https://render-to-be-completed-later.com/api",
+        url: "https://mevntello-backend.onrender.com//api",
       },
     ],
     ...swaggerDefinition,
