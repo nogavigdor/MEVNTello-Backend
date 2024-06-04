@@ -1,5 +1,13 @@
 import { Schema, model } from "mongoose";
 import { TaskDocument } from "../interfaces/ITask";
+import { Types } from "mongoose";
+import ISubTask from "../interfaces/ISubTask";
+
+const subTaskSchema = new Schema<ISubTask>({
+    _id: { type: Schema.Types.ObjectId, default: () => new Types.ObjectId() },
+    name: { type: String, required: true },
+    completed: { type: Boolean, required: true, default: false },
+});
 
 export const taskSchema = new Schema<TaskDocument>(
     {
@@ -41,12 +49,7 @@ export const taskSchema = new Schema<TaskDocument>(
         enum: ["todo", "inProgress", "done"],
         required: true,
         },
-        subTasks: [
-        {
-            name: String,
-            completed: Boolean,
-        },
-        ], // Add a closing curly brace here
+        subTasks: [subTaskSchema],
     }
 ,{
         timestamps: true, // This correctly adds `createdAt` and `updatedAt` fields

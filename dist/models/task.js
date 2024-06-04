@@ -2,6 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.taskSchema = void 0;
 const mongoose_1 = require("mongoose");
+const mongoose_2 = require("mongoose");
+const subTaskSchema = new mongoose_1.Schema({
+    _id: { type: mongoose_1.Schema.Types.ObjectId, default: () => new mongoose_2.Types.ObjectId() },
+    name: { type: String, required: true },
+    completed: { type: Boolean, required: true, default: false },
+});
 exports.taskSchema = new mongoose_1.Schema({
     listId: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -41,12 +47,7 @@ exports.taskSchema = new mongoose_1.Schema({
         enum: ["todo", "inProgress", "done"],
         required: true,
     },
-    subTasks: [
-        {
-            name: String,
-            completed: Boolean,
-        },
-    ], // Add a closing curly brace here
+    subTasks: [subTaskSchema],
 }, {
     timestamps: true, // This correctly adds `createdAt` and `updatedAt` fields
 });

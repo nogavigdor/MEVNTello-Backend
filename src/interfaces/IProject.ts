@@ -4,6 +4,7 @@ import { TeamMember } from './ITeamMember';
 
 // Project interface
 export interface IProject {
+  _id: Types.ObjectId;
   projectId: Types.ObjectId;
   name: string;
   description: string;
@@ -16,4 +17,6 @@ export interface IProject {
   updatedAt?: Date;
 }
 
-export interface ProjectDocument extends IProject, Document {}
+export interface ProjectDocument extends IProject, Document {
+  _id: Types.ObjectId;
+}
