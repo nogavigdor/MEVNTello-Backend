@@ -9,6 +9,107 @@ info:
 servers:
   - url: http://localhost:4000/api
   - url: https://mevntello-backend.onrender.com//api
+tags:
+  - name: User Routes
+    description: Routes for user registration and login
+  - name: Project
+    description: Routes for project management
+  - name: List
+    description: Routes for list management
+  - name: Task
+    description: Routes for task management
+components:
+  securitySchemes:
+    ApiKeyAuth:        # arbitrary name for the security scheme
+      type: apiKey
+      in: header       # can be "header", "query" or "cookie"
+      name: auth-token
+  schemas:
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Project:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        allocatedHours:
+          type: number
+        teamMembers:
+          type: array
+          items:
+            type: object
+            properties:
+              userId:
+                type: string
+              role:
+                type: string
+                enum: [leader, member]
+        lists:
+          type: array
+          items:
+            type: string
+    List:
+      type: object
+      properties:
+        name:
+          type: string
+        projectId:
+          type: string
+        tasks:
+          type: array
+          items:
+            type: string
+    Task:
+      type: object
+      properties:
+        listId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        assignedMembers:
+          type: array
+          items:
+            type: string
+        hoursAllocated:
+          type: number
+        hoursUsed:
+          type: number
+        status:
+          type: string
+          enum: [todo, inProgress, done]
+        subTasks:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              completed:
+                type: boolean
+    SubTask:
+      type: object
+      properties:
+        name:
+          type: string
+        completed:
+          type: boolean
 paths:
   /user/register:
     post:
