@@ -113,7 +113,6 @@ components:
 paths:
   /user/register:
     post:
-      tags: user routes
       summary: Register a new user
       requestBody:
         required: true
@@ -135,7 +134,6 @@ paths:
           description: Bad request
   /user/login:
     post:
-      tags: User Routes
       summary: Log in a user
       requestBody:
         required: true
@@ -155,7 +153,6 @@ paths:
           description: Invalid credentials
   /projects:
     get:
-      tags: get routes
       summary: Get all projects
       responses:
         '200':
@@ -163,7 +160,6 @@ paths:
         '500':
           description: Server error
     post:
-      tags: post routes
       summary: Create a new project
       requestBody:
         required: true
@@ -205,7 +201,6 @@ paths:
           description: Bad request
   /projects/{id}:
     get:
-      tags: get routes
       summary: Get a project by ID
       parameters:
         - name: id
@@ -221,7 +216,6 @@ paths:
         '500':
           description: Server error
     put:
-      tags: put routes
       summary: Update a project
       parameters:
         - name: id
@@ -272,7 +266,6 @@ paths:
         '500':
           description: Server error
     delete:
-      tags: delete routes
       summary: Delete a project
       parameters:
         - name: id
@@ -289,7 +282,6 @@ paths:
           description: Server error
   /lists:
     get:
-      tags: get routes
       summary: Get all lists
       responses:
         '200':
@@ -297,7 +289,6 @@ paths:
         '500':
           description: Server error
     post:
-      tags: post routes
       summary: Create a new list
       requestBody:
         required: true
@@ -321,7 +312,6 @@ paths:
           description: Bad request
   /lists/{id}:
     get:
-      tags: get routes
       summary: Get a list by ID
       parameters:
         - name: id
@@ -337,7 +327,6 @@ paths:
         '500':
           description: Server error
     put:
-      tags: put routes
       summary: Update a list
       parameters:
         - name: id
@@ -370,7 +359,6 @@ paths:
         '500':
           description: Server error
     delete:
-      tags: delete routes
       summary: Delete a list
       parameters:
         - name: id
@@ -387,7 +375,6 @@ paths:
           description: Server error
   /tasks:
     get:
-      tags: get routes
       summary: Get all tasks
       responses:
         '200':
@@ -395,7 +382,6 @@ paths:
         '500':
           description: Server error
     post:
-      tags: post routes
       summary: Create a new task
       requestBody:
         required: true
@@ -437,7 +423,6 @@ paths:
           description: Bad request
   /tasks/{id}:
     get:
-      tags: get routes
       summary: Get a task by ID
       parameters:
         - name: id
@@ -453,7 +438,6 @@ paths:
         '500':
           description: Server error
     put:
-      tags: put routes
       summary: Update a task
       parameters:
         - name: id
@@ -504,7 +488,6 @@ paths:
         '500':
           description: Server error
     delete:
-      tags: delete routes
       summary: Delete a task
       parameters:
         - name: id
@@ -521,7 +504,6 @@ paths:
           description: Server error
   /tasks/{taskId}/subtasks:
     post:
-      tags: post routes
       summary: Create a new subtask
       parameters:
         - name: taskId
@@ -546,7 +528,6 @@ paths:
         '400':
           description: Bad request
     get:
-      tags: get routes
       summary: Get all subtasks
       parameters:
         - name: taskId
@@ -563,7 +544,6 @@ paths:
           description: Server error
   /tasks/{taskId}/subtasks/{subtaskId}:
     put:
-      tags: put routes
       summary: Update a subtask
       parameters:
         - name: taskId
@@ -597,7 +577,6 @@ paths:
         '500':
           description: Server error
     delete:
-      tags: delete routes
       summary: Delete a subtask
       parameters:
         - name: taskId
