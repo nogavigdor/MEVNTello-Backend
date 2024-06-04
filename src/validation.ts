@@ -1,14 +1,20 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
+import Project from './models/project'; 
+import List from './models/list';
+import Task from './models/task';
 import { ProjectDocument } from './interfaces/IProject';
 import { ListDocument } from './interfaces/IList';
 import { TaskDocument } from './interfaces/ITask';
 import { UserDocument } from './interfaces/IUser';
 import { UserPayload } from './interfaces/IUserPayload';
+import { CustomRequest } from './interfaces/ICustomRequest';
+
 // Project Validation Schema
 const projectValidation = (data: ProjectDocument) => {
     const schema = Joi.object({
+        _id: Joi.string().optional(), 
         name: Joi.string().required().max(255),
         description: Joi.string().allow('').max(1000),
         startDate: Joi.date().required(),
@@ -26,13 +32,14 @@ const projectValidation = (data: ProjectDocument) => {
         createdAt: Joi.date().optional(),
         updatedAt: Joi.date().optional()
     });
- 
+
     return schema.validate(data);
 };
 
 // List Validation Schema
 const listValidation = (data: ListDocument) => {
     const schema = Joi.object({
+        _id: Joi.string().optional(), 
         name: Joi.string().required().max(255),
         projectId: Joi.string().required(),
         tasks: Joi.array().items(
@@ -47,6 +54,7 @@ const listValidation = (data: ListDocument) => {
 // Task Validation Schema
 const taskValidation = (data: TaskDocument) => {
     const schema = Joi.object({
+        _id: Joi.string().optional(), 
         listId: Joi.string().required(),
         name: Joi.string().required().max(255),
         description: Joi.string().required().max(255),
@@ -71,6 +79,7 @@ const taskValidation = (data: TaskDocument) => {
 // Registration Validation Schema
 const registerValidation = (data: UserDocument) => {
     const schema = Joi.object({
+        _id: Joi.string().optional(), 
         name: Joi.string().min(6).max(255).required(),
         email: Joi.string().min(6).max(255).required().email(),
         password: Joi.string().min(6).max(255).required()
@@ -79,7 +88,7 @@ const registerValidation = (data: UserDocument) => {
 };
 
 // Login Validation Schema
-const loginValidation = (data: UserDocument) => {
+const loginValidation = (data: { email: string; password: string }) => {
     const schema = Joi.object({
         email: Joi.string().min(6).max(255).required().email(),
         password: Joi.string().min(6).max(255).required()
@@ -88,9 +97,7 @@ const loginValidation = (data: UserDocument) => {
 };
 
 // Token Verification Middleware
-interface CustomRequest extends Request {
-    user: UserPayload;
-}
+
 
 const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
     const token = req.header('auth-token');
@@ -105,4 +112,58 @@ const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
     }
 };
 
-export { registerValidation, loginValidation, verifyToken, projectValidation, listValidation, taskValidation };
+// Check if the user is a team member and leader
+const isLeader: RequestHandler = async (req, res, next) => {
+    const projectId = req.params.id;
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+        return res.status(404).json({ message: "Project not found" });
+    }
+
+    const isLeader = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id && member.role === 'leader');
+
+    if (!isLeader) {
+        return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
+    }
+
+    next();
+};
+
+// Check if the user is a team member
+const isProjectMember: RequestHandler = async (req, res, next) => {
+    const projectId = req.params.id || req.body.projectId; // Adjust to ensure it checks both params and body
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+        return res.status(404).json({ message: "Project not found" });
+    }
+
+    const isMember = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id);
+
+    if (!isMember) {
+        return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+    }
+
+    next();
+};
+
+//Checks if the user is task member
+const isTaskMember: RequestHandler = async (req, res, next) => {
+    const taskId = req.params.id || req.body.taskId; // Adjust to ensure it checks both params and body
+    const task = await Task.findById(taskId);
+
+    if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+    }
+
+    const isMember = task.assignedMembers.some(member => member.toString() === (req as CustomRequest).user._id);
+
+    if (!isMember) {
+        return res.status(403).json({ message: 'Access Denied: You are not a team member of this task' });
+    }
+
+    next();
+};
+
+export { registerValidation, loginValidation, verifyToken, projectValidation, listValidation, taskValidation, isLeader, isProjectMember, isTaskMember };
