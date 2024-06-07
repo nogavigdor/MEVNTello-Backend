@@ -27,8 +27,8 @@ const projectValidation = (data: ProjectDocument) => {
             })
         ).min(1),
         lists: Joi.array().items(
-            Joi.string().required()
-        ).min(1),
+            Joi.string().optional()
+        ).min(0).optional(),
         createdAt: Joi.date().optional(),
         updatedAt: Joi.date().optional()
     });

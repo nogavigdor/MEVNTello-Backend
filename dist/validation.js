@@ -21,7 +21,7 @@ const projectValidation = (data) => {
             userId: joi_1.default.string().required(),
             role: joi_1.default.string().valid('leader', 'member').required()
         })).min(1),
-        lists: joi_1.default.array().items(joi_1.default.string().required()).min(1),
+        lists: joi_1.default.array().items(joi_1.default.string().optional()).min(0).optional(),
         createdAt: joi_1.default.date().optional(),
         updatedAt: joi_1.default.date().optional()
     });
