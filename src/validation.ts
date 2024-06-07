@@ -105,6 +105,7 @@ const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
 
     try {
         const verified = jwt.verify(token, process.env.TOKEN_SECRET as string) as UserPayload;
+        //attaches the user data to the request object
         req.user = verified;
         next();
     } catch (err) {

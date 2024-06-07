@@ -22,7 +22,7 @@ router.post("/register", async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
   console.log('Hashed password:', hashedPassword);
-            
+
   const user = new User({
     username: req.body.username,
     email: req.body.email,
@@ -56,14 +56,15 @@ console.log('Stored password hash:', user.password);
   if (!validPass) return res.status(400).json({ message: "Invalid password" });
 
   const token = jwt.sign(
-    { id: user._id, email: user.email },
+    { _id: user._id, email: user.email },
     process.env.TOKEN_SECRET as string,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
 
   res.header("auth-token", token).json({
+    //include the token and user data in the response
     token,
-    user: { id: user._id, email: user.email },
+    user: { _id: user._id, email: user.email }, 
   });
 });
 

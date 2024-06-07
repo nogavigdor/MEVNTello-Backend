@@ -89,6 +89,7 @@ const verifyToken = (req, res, next) => {
         return res.status(401).json({ message: 'Access Denied' });
     try {
         const verified = jsonwebtoken_1.default.verify(token, process.env.TOKEN_SECRET);
+        //attaches the user data to the request object
         req.user = verified;
         next();
     }

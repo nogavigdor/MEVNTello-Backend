@@ -38,6 +38,9 @@ router.get('/:id', verifyToken as RequestHandler, async (req, res) => {
 
 // Create a new project
 router.post('/', verifyToken as RequestHandler, async (req, res) => {
+    const customReq = req as CustomRequest;
+    console.log('User from token:', customReq.user); // Log the user from the token
+   
     const { error } = projectValidation(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
