@@ -9,7 +9,10 @@ const router = express.Router();
 // Registration Route
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
-  if (error) return res.status(400).json({ message: error.details[0].message });
+  if (error) {
+    console.log('Validation error:', error.details[0].message);
+    return res.status(400).json({ message: error.details[0].message });
+  }
 
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist)
@@ -18,7 +21,8 @@ router.post("/register", async (req, res) => {
   // Hash the password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
+  console.log('Hashed password:', hashedPassword);
+            
   const user = new User({
     username: req.body.username,
     email: req.body.email,
@@ -35,12 +39,19 @@ router.post("/register", async (req, res) => {
 
 // Login Route
 router.post("/login", async (req, res) => {
-  const { error } = loginValidation(req.body);
-  if (error) return res.status(400).json({ message: error.details[0].message });
+const { error } = loginValidation(req.body);
+if (error) {
+    console.log('Validation error:', error.details[0].message);
+    return res.status(400).json({ message: error.details[0].message });
+}
 
-  const user = await User.findOne({ email: req.body.email });
-  if (!user) return res.status(400).json({ message: "Email is not found" });
-  console.log(req.body.password, user.password);
+const user = await User.findOne({ email: req.body.email });
+
+if (!user) return res.status(400).json({ message: "Email is not found" });
+
+console.log('Input password:', req.body.password);
+console.log('Stored password hash:', user.password);
+
   const validPass = await bcrypt.compare(req.body.password, user.password);
   if (!validPass) return res.status(400).json({ message: "Invalid password" });
 
