@@ -39,6 +39,7 @@ router.post("/register", async (req, res) => {
 
 // Login Route
 router.post("/login", async (req, res) => {
+console.log('Login request received:', req.body);  // Log the request payload
 const { error } = loginValidation(req.body);
 if (error) {
     console.log('Validation error:', error.details[0].message);
@@ -56,7 +57,7 @@ console.log('Stored password hash:', user.password);
   if (!validPass) return res.status(400).json({ message: "Invalid password" });
 
   const token = jwt.sign(
-    { _id: user._id, email: user.email },
+    { _id: user._id, username:user.username, email: user.email },
     process.env.TOKEN_SECRET as string,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
@@ -64,7 +65,7 @@ console.log('Stored password hash:', user.password);
   res.header("auth-token", token).json({
     //include the token and user data in the response
     token,
-    user: { _id: user._id, email: user.email }, 
+    user: { _id: user._id, username: user.username, email: user.email }, 
   });
 });
 
