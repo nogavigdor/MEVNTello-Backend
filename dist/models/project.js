@@ -41,12 +41,6 @@ const projectSchema = new mongoose_1.Schema({
             },
         },
     ],
-    lists: [
-        {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "List",
-        },
-    ]
 }, {
     timestamps: true,
 });

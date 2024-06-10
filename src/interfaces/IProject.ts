@@ -12,7 +12,7 @@ export interface IProject {
   endDate: Date;
   allocatedHours: number;
   teamMembers: TeamMember[]; // Array of objects of User IDs with roles
-  lists: string[]; // Array of List IDs
+  lists?: Types.ObjectId[]; // Optional array of List IDs
   createdAt?: Date; 
   updatedAt?: Date;
 }

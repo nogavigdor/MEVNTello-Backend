@@ -20,9 +20,9 @@ tags:
     description: Routes for task management
 components:
   securitySchemes:
-    ApiKeyAuth:        # arbitrary name for the security scheme
+    ApiKeyAuth:
       type: apiKey
-      in: header       # can be "header", "query" or "cookie"
+      in: header
       name: auth-token
   schemas:
     User:
@@ -114,6 +114,8 @@ paths:
   /user/register:
     post:
       summary: Register a new user
+      tags:
+        - User Routes
       requestBody:
         required: true
         content:
@@ -135,6 +137,8 @@ paths:
   /user/login:
     post:
       summary: Log in a user
+      tags:
+        - User Routes
       requestBody:
         required: true
         content:
@@ -154,6 +158,10 @@ paths:
   /projects:
     get:
       summary: Get all projects
+      tags:
+        - Project
+      security:
+        - ApiKeyAuth: []
       responses:
         '200':
           description: Successfully retrieved projects
@@ -161,6 +169,10 @@ paths:
           description: Server error
     post:
       summary: Create a new project
+      tags:
+        - Project
+      security:
+        - ApiKeyAuth: []
       requestBody:
         required: true
         content:
@@ -190,10 +202,7 @@ paths:
                       role:
                         type: string
                         enum: [leader, member]
-                lists:
-                  type: array
-                  items:
-                    type: string
+           
       responses:
         '201':
           description: Project created successfully
@@ -202,6 +211,10 @@ paths:
   /projects/{id}:
     get:
       summary: Get a project by ID
+      tags:
+        - Project
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -217,6 +230,10 @@ paths:
           description: Server error
     put:
       summary: Update a project
+      tags:
+        - Project
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -252,10 +269,6 @@ paths:
                       role:
                         type: string
                         enum: [leader, member]
-                lists:
-                  type: array
-                  items:
-                    type: string
       responses:
         '200':
           description: Project updated successfully
@@ -267,6 +280,10 @@ paths:
           description: Server error
     delete:
       summary: Delete a project
+      tags:
+        - Project
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -283,6 +300,10 @@ paths:
   /lists:
     get:
       summary: Get all lists
+      tags:
+        - List
+      security:
+        - ApiKeyAuth: []
       responses:
         '200':
           description: Successfully retrieved lists
@@ -290,6 +311,10 @@ paths:
           description: Server error
     post:
       summary: Create a new list
+      tags:
+        - List
+      security:
+        - ApiKeyAuth: []
       requestBody:
         required: true
         content:
@@ -313,6 +338,10 @@ paths:
   /lists/{id}:
     get:
       summary: Get a list by ID
+      tags:
+        - List
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -328,6 +357,10 @@ paths:
           description: Server error
     put:
       summary: Update a list
+      tags:
+        - List
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -360,6 +393,10 @@ paths:
           description: Server error
     delete:
       summary: Delete a list
+      tags:
+        - List
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -376,6 +413,10 @@ paths:
   /tasks:
     get:
       summary: Get all tasks
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       responses:
         '200':
           description: Successfully retrieved tasks
@@ -383,6 +424,10 @@ paths:
           description: Server error
     post:
       summary: Create a new task
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       requestBody:
         required: true
         content:
@@ -424,6 +469,10 @@ paths:
   /tasks/{id}:
     get:
       summary: Get a task by ID
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -439,6 +488,10 @@ paths:
           description: Server error
     put:
       summary: Update a task
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -489,6 +542,10 @@ paths:
           description: Server error
     delete:
       summary: Delete a task
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: id
           in: path
@@ -505,6 +562,10 @@ paths:
   /tasks/{taskId}/subtasks:
     post:
       summary: Create a new subtask
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: taskId
           in: path
@@ -529,6 +590,10 @@ paths:
           description: Bad request
     get:
       summary: Get all subtasks
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: taskId
           in: path
@@ -545,6 +610,10 @@ paths:
   /tasks/{taskId}/subtasks/{subtaskId}:
     put:
       summary: Update a subtask
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: taskId
           in: path
@@ -578,6 +647,10 @@ paths:
           description: Server error
     delete:
       summary: Delete a subtask
+      tags:
+        - Task
+      security:
+        - ApiKeyAuth: []
       parameters:
         - name: taskId
           in: path

@@ -57,10 +57,13 @@ console.log('Stored password hash:', user.password);
   if (!validPass) return res.status(400).json({ message: "Invalid password" });
 
   const token = jwt.sign(
-    { _id: user._id, username:user.username, email: user.email },
+    { _id: user._id, username: user.username, email: user.email },
     process.env.TOKEN_SECRET as string,
     { expiresIn: process.env.JWT_EXPIRES_IN }
   );
+
+  console.log('Generated token:', token);
+  console.log('User data:', { _id: user._id, username: user.username, email: user.email });
 
   res.header("auth-token", token).json({
     //include the token and user data in the response
