@@ -113,6 +113,12 @@ const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
 // Check if the user is a team member and leader
 const isLeader: RequestHandler = async (req, res, next) => {
     const projectId = req.params.id;
+
+    if (!projectId) {
+        return res.status(400).json({ message: "Project ID is required" });
+    }
+
+
     const project = await Project.findById(projectId);
 
     if (!project) {
@@ -130,7 +136,12 @@ const isLeader: RequestHandler = async (req, res, next) => {
 
 // Check if the user is a team member
 const isProjectMember: RequestHandler = async (req, res, next) => {
-    const projectId = req.params.id || req.body.projectId; // Adjust to ensure it checks both params and body
+    const projectId = req.params.id || req.body.projectId; 
+
+    if (!projectId) {
+        return res.status(400).json({ message: "Project ID is required" });
+    }
+
     const project = await Project.findById(projectId);
 
     if (!project) {
@@ -148,7 +159,7 @@ const isProjectMember: RequestHandler = async (req, res, next) => {
 
 //Checks if the user is task member
 const isTaskMember: RequestHandler = async (req, res, next) => {
-    const taskId = req.params.id || req.body.taskId; // Adjust to ensure it checks both params and body
+    const taskId = req.params.id || req.body.taskId; 
     const task = await Task.findById(taskId);
 
     if (!task) {
