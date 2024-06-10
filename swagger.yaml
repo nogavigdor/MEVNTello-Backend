@@ -425,9 +425,9 @@ paths:
     post:
       summary: Create a new task
       tags:
-        - Task
+        - Tasks
       security:
-        - ApiKeyAuth: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -435,38 +435,42 @@ paths:
             schema:
               type: object
               properties:
+                projectId:
+                  type: string
+                  description: The ID of the project
                 listId:
                   type: string
+                  description: The ID of the list
                 name:
                   type: string
+                  description: The name of the task
                 description:
                   type: string
+                  description: The description of the task
                 assignedMembers:
                   type: array
                   items:
                     type: string
+                    description: The ID of the assigned members
                 hoursAllocated:
                   type: number
+                  description: The allocated hours for the task
                 hoursUsed:
                   type: number
+                  description: The used hours for the task
                 status:
                   type: string
-                  enum: [todo, inProgress, done]
-                subTasks:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                      completed:
-                        type: boolean
+                  enum: ["todo", "inProgress", "done"]
+                  description: The status of the task
       responses:
         '201':
           description: Task created successfully
         '400':
           description: Bad request
-  /tasks/{id}:
+        '401':
+          description: Access denied
+        '500':
+          description: Internal server error
     get:
       summary: Get a task by ID
       tags:
