@@ -23,7 +23,7 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
     }
 });
 
-// Get a specific project
+// Get a specific project (id is the project ID)
 router.get('/:id', verifyToken as RequestHandler, isMemberOrLeader as RequestHandler, async (req, res) => {
     try {
         const project = await Project.findById(req.params.id);
@@ -69,7 +69,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     }
 });
 
-// Update a project
+// Update a project (id is the project ID)
 router.put('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => {
     const { error } = projectValidation(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
@@ -87,7 +87,7 @@ router.put('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => 
     }
 });
 
-// Delete a project
+// Delete a project (id is the project ID)
 router.delete('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => {
     try {
         const removedProject = await Project.findByIdAndDelete(req.params.id);
