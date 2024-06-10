@@ -110,7 +110,7 @@ const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
     }
 };
 
-// Check if the user is a team member and leader
+// Check if the user is a  leader
 const isLeader: RequestHandler = async (req, res, next) => {
     const projectId = req.params.id;
 
@@ -124,7 +124,7 @@ const isLeader: RequestHandler = async (req, res, next) => {
     if (!project) {
         return res.status(404).json({ message: "Project not found" });
     }
-
+    //checks if the user is a leader
     const isLeader = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id && member.role === 'leader');
 
     if (!isLeader) {
@@ -134,7 +134,7 @@ const isLeader: RequestHandler = async (req, res, next) => {
     next();
 };
 
-// Check if the user is a team member
+// Check if the user is a team member (and not a leader)
 const isProjectMember: RequestHandler = async (req, res, next) => {
     const projectId = req.params.id || req.body.projectId; 
 
@@ -147,10 +147,28 @@ const isProjectMember: RequestHandler = async (req, res, next) => {
     if (!project) {
         return res.status(404).json({ message: "Project not found" });
     }
-
-    const isMember = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id);
+    //checks if the user is a member
+    const isMember = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id && member.role === 'member');
 
     if (!isMember) {
+        return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+    }
+
+    next();
+};
+
+// Check if the user is a team member or leader
+const isMemberOrLeader: RequestHandler = async (req, res, next) => {
+    const projectId = req.params.id || req.body.projectId; // Adjust to ensure it checks both params and body
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+        return res.status(404).json({ message: "Project not found" });
+    }
+    //checks if the user is a member or leader
+    const isMemberOrLeader = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id);
+
+    if (!isMemberOrLeader) {
         return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
     }
 
