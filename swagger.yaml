@@ -111,6 +111,18 @@ components:
         completed:
           type: boolean
 paths:
+  /user:
+    get:
+      summary: Get all users
+      tags:
+        - User Routes
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved users
+        '500':
+          description: Server error
   /user/register:
     post:
       summary: Register a new user
