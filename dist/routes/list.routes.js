@@ -8,10 +8,10 @@ const validation_1 = require("../validation");
 const list_1 = __importDefault(require("../models/list"));
 const validation_2 = require("../validation");
 const router = express_1.default.Router();
-// Get all lists
-router.get('/', validation_1.verifyToken, async (req, res) => {
+// Get all lists for a project
+router.get('/project/:projectId', validation_1.verifyToken, validation_1.isProjectMember, async (req, res) => {
     try {
-        const lists = await list_1.default.find();
+        const lists = await list_1.default.find({ projectId: req.params.projectId });
         res.json(lists);
     }
     catch (err) {
@@ -19,11 +19,11 @@ router.get('/', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Get a specific list
-router.get('/:id', validation_1.verifyToken, async (req, res) => {
+router.get('/:id', validation_1.verifyToken, validation_1.isLeader, validation_1.isProjectMember, async (req, res) => {
     try {
         const list = await list_1.default.findById(req.params.id);
         if (!list)
-            return res.status(404).json({ message: "List not found" });
+            return res.status(404).json({ message: 'List not found' });
         res.json(list);
     }
     catch (err) {
@@ -31,11 +31,19 @@ router.get('/:id', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Create a new list
-router.post('/', validation_1.verifyToken, async (req, res) => {
-    const { error } = (0, validation_2.listValidation)(req.body);
+router.post('/', validation_1.verifyToken, validation_1.isLeader, async (req, res) => {
+    const customReq = req;
+    const { error } = (0, validation_2.listValidation)(customReq.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
-    const list = new list_1.default(req.body);
+    const projectId = customReq.body.projectId;
+    if (!projectId) {
+        return res.status(400).json({ message: 'Project ID is required' });
+    }
+    const list = new list_1.default({
+        ...customReq.body,
+        projectId: projectId,
+    });
     try {
         const savedList = await list.save();
         res.status(201).json(savedList);
@@ -45,14 +53,14 @@ router.post('/', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Update a list
-router.put('/:id', validation_1.verifyToken, async (req, res) => {
+router.put('/:id', validation_1.verifyToken, validation_1.isLeader, async (req, res) => {
     const { error } = (0, validation_2.listValidation)(req.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
     try {
         const updatedList = await list_1.default.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!updatedList)
-            return res.status(404).json({ message: "List not found" });
+            return res.status(404).json({ message: 'List not found' });
         res.json(updatedList);
     }
     catch (err) {
@@ -60,12 +68,12 @@ router.put('/:id', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Delete a list
-router.delete('/:id', validation_1.verifyToken, async (req, res) => {
+router.delete('/:id', validation_1.verifyToken, validation_1.isLeader, async (req, res) => {
     try {
         const removedList = await list_1.default.findByIdAndDelete(req.params.id);
         if (!removedList)
-            return res.status(404).json({ message: "List not found" });
-        res.json({ message: "List deleted" });
+            return res.status(404).json({ message: 'List not found' });
+        res.json({ message: 'List deleted' });
     }
     catch (err) {
         res.status(500).json({ message: err.message });

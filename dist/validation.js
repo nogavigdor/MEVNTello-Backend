@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isTaskMember = exports.isProjectMember = exports.isLeader = exports.taskValidation = exports.listValidation = exports.projectValidation = exports.verifyToken = exports.loginValidation = exports.registerValidation = void 0;
+exports.isTaskMember = exports.isMemberOrLeader = exports.isProjectMember = exports.isLeader = exports.taskValidation = exports.listValidation = exports.projectValidation = exports.verifyToken = exports.loginValidation = exports.registerValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const project_1 = __importDefault(require("./models/project"));
@@ -21,7 +21,6 @@ const projectValidation = (data) => {
             userId: joi_1.default.string().required(),
             role: joi_1.default.string().valid('leader', 'member').required()
         })).min(1),
-        lists: joi_1.default.array().items(joi_1.default.string().optional()).min(0).optional(),
         createdAt: joi_1.default.date().optional(),
         updatedAt: joi_1.default.date().optional()
     });
@@ -98,13 +97,17 @@ const verifyToken = (req, res, next) => {
     }
 };
 exports.verifyToken = verifyToken;
-// Check if the user is a team member and leader
+// Check if the user is a  leader
 const isLeader = async (req, res, next) => {
     const projectId = req.params.id;
+    if (!projectId) {
+        return res.status(400).json({ message: "Project ID is required" });
+    }
     const project = await project_1.default.findById(projectId);
     if (!project) {
         return res.status(404).json({ message: "Project not found" });
     }
+    //checks if the user is a leader
     const isLeader = project.teamMembers.some(member => member.userId.toString() === req.user._id && member.role === 'leader');
     if (!isLeader) {
         return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
@@ -112,23 +115,42 @@ const isLeader = async (req, res, next) => {
     next();
 };
 exports.isLeader = isLeader;
-// Check if the user is a team member
+// Check if the user is a team member (and not a leader)
 const isProjectMember = async (req, res, next) => {
-    const projectId = req.params.id || req.body.projectId; // Adjust to ensure it checks both params and body
+    const projectId = req.params.id || req.body.projectId;
+    if (!projectId) {
+        return res.status(400).json({ message: "Project ID is required" });
+    }
     const project = await project_1.default.findById(projectId);
     if (!project) {
         return res.status(404).json({ message: "Project not found" });
     }
-    const isMember = project.teamMembers.some(member => member.userId.toString() === req.user._id);
+    //checks if the user is a member
+    const isMember = project.teamMembers.some(member => member.userId.toString() === req.user._id && member.role === 'member');
     if (!isMember) {
         return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
     }
     next();
 };
 exports.isProjectMember = isProjectMember;
+// Check if the user is a team member or leader
+const isMemberOrLeader = async (req, res, next) => {
+    const projectId = req.params.id || req.body.projectId; // Adjust to ensure it checks both params and body
+    const project = await project_1.default.findById(projectId);
+    if (!project) {
+        return res.status(404).json({ message: "Project not found" });
+    }
+    //checks if the user is a member or leader
+    const isMemberOrLeader = project.teamMembers.some(member => member.userId.toString() === req.user._id);
+    if (!isMemberOrLeader) {
+        return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+    }
+    next();
+};
+exports.isMemberOrLeader = isMemberOrLeader;
 //Checks if the user is task member
 const isTaskMember = async (req, res, next) => {
-    const taskId = req.params.id || req.body.taskId; // Adjust to ensure it checks both params and body
+    const taskId = req.params.id || req.body.taskId;
     const task = await task_1.default.findById(taskId);
     if (!task) {
         return res.status(404).json({ message: "Task not found" });
