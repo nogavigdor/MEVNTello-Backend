@@ -112,7 +112,7 @@ const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
 
 // Check if the user is a  leader
 const isLeader: RequestHandler = async (req, res, next) => {
-    const projectId = req.params.id;
+    const projectId = req.params.id || req.body.projectId; 
 
     if (!projectId) {
         return res.status(400).json({ message: "Project ID is required" });
