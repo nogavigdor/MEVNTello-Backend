@@ -1,10 +1,22 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { registerValidation, loginValidation } from "../validation";
+import { registerValidation, loginValidation, verifyToken } from "../validation";
+import { RequestHandler } from "express";
 import User from "../models/user";
 
 const router = express.Router();
+
+// Get all users with specific fields
+router.get("/", verifyToken as RequestHandler, async (req, res) => {
+  try {
+    // Use MongoDB projection to select only the _id, username, and email fields
+    const users = await User.find({}, '_id username email').exec();
+    res.json(users);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 // Registration Route
 router.post("/register", async (req, res) => {

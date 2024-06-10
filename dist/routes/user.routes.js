@@ -9,6 +9,17 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const validation_1 = require("../validation");
 const user_1 = __importDefault(require("../models/user"));
 const router = express_1.default.Router();
+// Get all users with specific fields
+router.get("/", validation_1.verifyToken, async (req, res) => {
+    try {
+        // Use MongoDB projection to select only the _id, username, and email fields
+        const users = await user_1.default.find({}, '_id username email').exec();
+        res.json(users);
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 // Registration Route
 router.post("/register", async (req, res) => {
     const { error } = (0, validation_1.registerValidation)(req.body);
