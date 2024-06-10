@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken, isLeader, isProjectMember, projectValidation } from '../validation';
+import { verifyToken, isLeader, isProjectMember, projectValidation, isMemberOrLeader } from '../validation';
 import Project from '../models/project';
 import { RequestHandler } from 'express';
 import { CustomRequest } from '../interfaces/ICustomRequest';
@@ -24,7 +24,7 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
 });
 
 // Get a specific project
-router.get('/:id', verifyToken as RequestHandler, isProjectMember as RequestHandler, async (req, res) => {
+router.get('/:id', verifyToken as RequestHandler, isMemberOrLeader as RequestHandler, async (req, res) => {
     try {
         const project = await Project.findById(req.params.id);
         if (!project) return res.status(404).json({ message: "Project not found" });

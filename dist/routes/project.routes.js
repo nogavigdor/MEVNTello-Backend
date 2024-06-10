@@ -26,7 +26,7 @@ router.get('/', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Get a specific project
-router.get('/:id', validation_1.verifyToken, validation_1.isProjectMember, async (req, res) => {
+router.get('/:id', validation_1.verifyToken, validation_1.isMemberOrLeader, async (req, res) => {
     try {
         const project = await project_1.default.findById(req.params.id);
         if (!project)
