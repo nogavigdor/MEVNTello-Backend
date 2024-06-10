@@ -193,4 +193,4 @@ const isTaskMember: RequestHandler = async (req, res, next) => {
     next();
 };
 
-export { registerValidation, loginValidation, verifyToken, projectValidation, listValidation, taskValidation, isLeader, isProjectMember, isTaskMember };
+export { registerValidation, loginValidation, verifyToken, projectValidation, listValidation, taskValidation, isLeader, isProjectMember, isMemberOrLeader, isTaskMember };
