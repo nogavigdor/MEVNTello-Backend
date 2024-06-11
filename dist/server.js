@@ -79,7 +79,7 @@ mongoose_1.default
 app.use("/api/projects", project_routes_1.default);
 app.use("/api/tasks", task_routes_1.default);
 app.use("/api/lists", list_routes_1.default);
-app.use("/api/user", user_routes_1.default);
+app.use("/api/users", user_routes_1.default);
 // Handle 404 errors
 app.use("/", (req, res) => {
     res.status(404).send({ message: "Page not found" });

@@ -88,7 +88,7 @@ mongoose
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/lists", listRoutes); 
-app.use("/api/user", authRoutes);
+app.use("/api/users", authRoutes);
 
 // Handle 404 errors
 app.use("/", (req: Request, res: Response) => {
