@@ -18,7 +18,7 @@ const projectValidation = (data) => {
         endDate: joi_1.default.date().required(),
         allocatedHours: joi_1.default.number().required().min(0),
         teamMembers: joi_1.default.array().items(joi_1.default.object({
-            userId: joi_1.default.string().required(),
+            _id: joi_1.default.string().required(),
             role: joi_1.default.string().valid('leader', 'member').required()
         })).min(1),
         createdAt: joi_1.default.date().optional(),
@@ -108,7 +108,7 @@ const isLeader = async (req, res, next) => {
         return res.status(404).json({ message: "Project not found" });
     }
     //checks if the user is a leader
-    const isLeader = project.teamMembers.some(member => member.userId.toString() === req.user._id && member.role === 'leader');
+    const isLeader = project.teamMembers.some(member => member._id.toString() === req.user._id && member.role === 'leader');
     if (!isLeader) {
         return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
     }
@@ -126,7 +126,7 @@ const isProjectMember = async (req, res, next) => {
         return res.status(404).json({ message: "Project not found" });
     }
     //checks if the user is a member
-    const isMember = project.teamMembers.some(member => member.userId.toString() === req.user._id && member.role === 'member');
+    const isMember = project.teamMembers.some(member => member._id.toString() === req.user._id && member.role === 'member');
     if (!isMember) {
         return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
     }
@@ -141,7 +141,7 @@ const isMemberOrLeader = async (req, res, next) => {
         return res.status(404).json({ message: "Project not found" });
     }
     //checks if the user is a member or leader
-    const isMemberOrLeader = project.teamMembers.some(member => member.userId.toString() === req.user._id);
+    const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === req.user._id);
     if (!isMemberOrLeader) {
         return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
     }

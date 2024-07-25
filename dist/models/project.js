@@ -29,7 +29,7 @@ const projectSchema = new mongoose_1.Schema({
     },
     teamMembers: [
         {
-            userId: {
+            _id: {
                 type: mongoose_1.Schema.Types.ObjectId,
                 ref: 'User',
                 required: true,

@@ -30,7 +30,7 @@ const projectSchema = new Schema<ProjectDocument>(
     },
     teamMembers: [
             {
-                userId: {
+                _id: {
                     type: Schema.Types.ObjectId,
                     ref: 'User',
                     required: true,

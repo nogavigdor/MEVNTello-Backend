@@ -12,7 +12,7 @@ router.get('/', validation_1.verifyToken, async (req, res) => {
     const customReq = req;
     try {
         const projects = await project_1.default.find({
-            'teamMembers.userId': customReq.user._id
+            'teamMembers._id': customReq.user._id
         });
         res.json(projects);
     }
@@ -49,14 +49,23 @@ router.post('/', validation_1.verifyToken, async (req, res) => {
     const { error } = (0, validation_1.projectValidation)(req.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
-    // Automatically assign the creator as the leader
+    // Destructure the request body
+    const { name, description, startDate, endDate, allocatedHours, teamMembers } = req.body;
+    // Create a new project
     const project = new project_1.default({
-        ...req.body,
+        name,
+        description,
+        startDate,
+        endDate,
+        allocatedHours,
         teamMembers: [
             {
-                userId: req.user._id,
+                // Add the user from the token as the leader
+                _id: req.user._id,
                 role: 'leader'
-            }
+            },
+            // Add team members from the request body
+            ...teamMembers // Include team members from the request body
         ]
     });
     try {

@@ -54,7 +54,7 @@ components:
           items:
             type: object
             properties:
-              userId:
+              _id:
                 type: string
               role:
                 type: string
@@ -209,7 +209,7 @@ paths:
                   items:
                     type: object
                     properties:
-                      userId:
+                      _id:
                         type: string
                       role:
                         type: string
@@ -276,7 +276,7 @@ paths:
                   items:
                     type: object
                     properties:
-                      userId:
+                      _id:
                         type: string
                       role:
                         type: string

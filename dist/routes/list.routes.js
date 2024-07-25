@@ -70,7 +70,7 @@ router.put('/:id', validation_1.verifyToken, async (req, res) => {
         const project = await project_1.default.findById(projectId);
         if (!project)
             return res.status(404).json({ message: 'Project not found' });
-        const isLeader = project.teamMembers.some(member => member.userId.toString() === customReq.user._id && member.role === 'leader');
+        const isLeader = project.teamMembers.some(member => member._id.toString() === customReq.user._id && member.role === 'leader');
         if (!isLeader)
             return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
         const updatedList = await list_1.default.findByIdAndUpdate(customReq.params.id, customReq.body, { new: true });
@@ -92,7 +92,7 @@ router.delete('/:id', validation_1.verifyToken, async (req, res) => {
         const project = await project_1.default.findById(projectId);
         if (!project)
             return res.status(404).json({ message: 'Project not found' });
-        const isLeader = project.teamMembers.some(member => member.userId.toString() === customReq.user._id && member.role === 'leader');
+        const isLeader = project.teamMembers.some(member => member._id.toString() === customReq.user._id && member.role === 'leader');
         if (!isLeader)
             return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
         await list_1.default.findByIdAndDelete(customReq.params.id);

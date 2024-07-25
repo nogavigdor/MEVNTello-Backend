@@ -22,7 +22,7 @@ const projectValidation = (data: ProjectDocument) => {
         allocatedHours: Joi.number().required().min(0),
         teamMembers: Joi.array().items(
             Joi.object({
-                userId: Joi.string().required(),
+                _id: Joi.string().required(),
                 role: Joi.string().valid('leader', 'member').required()
             })
         ).min(1),
@@ -125,7 +125,7 @@ const isLeader: RequestHandler = async (req, res, next) => {
         return res.status(404).json({ message: "Project not found" });
     }
     //checks if the user is a leader
-    const isLeader = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id && member.role === 'leader');
+    const isLeader = project.teamMembers.some(member => member._id.toString() === (req as CustomRequest).user._id && member.role === 'leader');
 
     if (!isLeader) {
         return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
@@ -148,7 +148,7 @@ const isProjectMember: RequestHandler = async (req, res, next) => {
         return res.status(404).json({ message: "Project not found" });
     }
     //checks if the user is a member
-    const isMember = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id && member.role === 'member');
+    const isMember = project.teamMembers.some(member => member._id.toString() === (req as CustomRequest).user._id && member.role === 'member');
 
     if (!isMember) {
         return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
@@ -166,7 +166,7 @@ const isMemberOrLeader: RequestHandler = async (req, res, next) => {
         return res.status(404).json({ message: "Project not found" });
     }
     //checks if the user is a member or leader
-    const isMemberOrLeader = project.teamMembers.some(member => member.userId.toString() === (req as CustomRequest).user._id);
+    const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === (req as CustomRequest).user._id);
 
     if (!isMemberOrLeader) {
         return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });

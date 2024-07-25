@@ -11,7 +11,7 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
     try {
         const projects = await Project.find({
-            'teamMembers.userId': customReq.user._id
+            'teamMembers._id': customReq.user._id
         });
         res.json(projects);
     } catch (err: unknown) {
