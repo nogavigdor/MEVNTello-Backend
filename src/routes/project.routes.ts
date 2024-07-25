@@ -46,14 +46,24 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     const { error } = projectValidation(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
-    // Automatically assign the creator as the leader
+    // Destructure the request body
+    const { name, description, startDate, endDate, allocatedHours, teamMembers } = req.body;
+
+    // Create a new project
     const project = new Project({
-        ...req.body,
+        name,
+        description,
+        startDate,
+        endDate,
+        allocatedHours,
         teamMembers: [
             {
-                userId: (req as CustomRequest).user._id,
+                // Add the user from the token as the leader
+                _id: (req as CustomRequest).user._id,
                 role: 'leader'
-            }
+            },
+            // Add team members from the request body
+            ...teamMembers // Include team members from the request body
         ]
     });
 
