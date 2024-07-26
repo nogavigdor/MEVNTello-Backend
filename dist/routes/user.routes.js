@@ -72,4 +72,17 @@ router.post("/login", async (req, res) => {
         user: { _id: user._id, username: user.username, email: user.email },
     });
 });
+// Authenticated User Details Route
+router.get('/me', validation_1.verifyToken, async (req, res) => {
+    try {
+        const customReq = req;
+        const user = await user_1.default.findById(customReq.user._id, '_id username email');
+        if (!user)
+            return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 exports.default = router;

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { registerValidation, loginValidation, verifyToken } from "../validation";
 import { RequestHandler } from "express";
 import User from "../models/user";
+import { CustomRequest } from "../interfaces/ICustomRequest";
 
 const router = express.Router();
 
@@ -84,4 +85,15 @@ console.log('Stored password hash:', user.password);
   });
 });
 
+// Authenticated User Details Route
+router.get('/me', verifyToken as RequestHandler, async (req, res) => {
+  try {
+    const customReq = req as CustomRequest;
+    const user = await User.findById(customReq.user._id, '_id username email');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+});
 export default router;
