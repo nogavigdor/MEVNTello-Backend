@@ -23,21 +23,6 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
     }
 });
 
-// Get a specific project (id is the project ID)
-router.get('/:id', verifyToken as RequestHandler, isMemberOrLeader as RequestHandler, async (req, res) => {
-    try {
-        const project = await Project.findById(req.params.id);
-        if (!project) return res.status(404).json({ message: "Project not found" });
-        res.json(project);
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            res.status(500).json({ message: err.message });
-        } else {
-            res.status(500).json({ message: 'An unknown error occurred' });
-        }
-    }
-});
-
 //Get all projects for a specific user
 router.get('/user/:id', verifyToken as RequestHandler, async (req, res) => {
     try {
@@ -53,6 +38,23 @@ router.get('/user/:id', verifyToken as RequestHandler, async (req, res) => {
         }
     }
 });
+
+// Get a specific project (id is the project ID)
+router.get('/:id', verifyToken as RequestHandler, isMemberOrLeader as RequestHandler, async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id);
+        if (!project) return res.status(404).json({ message: "Project not found" });
+        res.json(project);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    }
+});
+
+
 
 // Create a new project
 router.post('/', verifyToken as RequestHandler, async (req, res) => {
