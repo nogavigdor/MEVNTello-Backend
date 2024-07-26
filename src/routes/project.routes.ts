@@ -38,6 +38,22 @@ router.get('/:id', verifyToken as RequestHandler, isMemberOrLeader as RequestHan
     }
 });
 
+//Get all projects for a specific user
+router.get('/user/:id', verifyToken as RequestHandler, async (req, res) => {
+    try {
+        const projects = await Project.find({
+            'teamMembers._id': req.params.id
+        });
+        res.json(projects);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    }
+});
+
 // Create a new project
 router.post('/', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
