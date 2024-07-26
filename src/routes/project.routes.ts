@@ -6,6 +6,13 @@ import { CustomRequest } from '../interfaces/ICustomRequest';
 
 const router = express.Router();
 
+
+// Middleware to log each request
+router.use((req, res, next) => {
+    console.log(`Received request: ${req.method} ${req.originalUrl}`);
+    next();
+});
+
 // Get all projects
 router.get('/', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
@@ -26,6 +33,8 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
 //Get all projects for a specific user
 router.get('/user/:id', verifyToken as RequestHandler, async (req, res) => {
     try {
+        console.log('Route /user/:id matched');
+        console.log('Fetching projects for user:', req.params.id);
         const projects = await Project.find({
             'teamMembers._id': req.params.id
         });

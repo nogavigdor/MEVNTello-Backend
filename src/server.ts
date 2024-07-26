@@ -27,6 +27,12 @@ app.use(cors({
 // Middleware for parsing JSON bodies
 app.use(bodyParser.json());
 
+// Global request logger
+app.use((req, res, next) => {
+  console.log(`Received request: ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // Swagger setup
 const swaggerDefinition = yaml.load("./swagger.yaml");
 

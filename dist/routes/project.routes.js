@@ -7,12 +7,36 @@ const express_1 = __importDefault(require("express"));
 const validation_1 = require("../validation");
 const project_1 = __importDefault(require("../models/project"));
 const router = express_1.default.Router();
+// Middleware to log each request
+router.use((req, res, next) => {
+    console.log(`Received request: ${req.method} ${req.originalUrl}`);
+    next();
+});
 // Get all projects
 router.get('/', validation_1.verifyToken, async (req, res) => {
     const customReq = req;
     try {
         const projects = await project_1.default.find({
             'teamMembers._id': customReq.user._id
+        });
+        res.json(projects);
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            res.status(500).json({ message: err.message });
+        }
+        else {
+            res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    }
+});
+//Get all projects for a specific user
+router.get('/user/:id', validation_1.verifyToken, async (req, res) => {
+    try {
+        console.log('Route /user/:id matched');
+        console.log('Fetching projects for user:', req.params.id);
+        const projects = await project_1.default.find({
+            'teamMembers._id': req.params.id
         });
         res.json(projects);
     }
