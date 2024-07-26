@@ -309,6 +309,26 @@ paths:
           description: Project not found
         '500':
           description: Server error
+  /projects/user/{userId}:
+    get:
+      summary: Get all projects by user ID
+      tags:
+        - Project
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved projects
+        '404':
+          description: User not found
+        '500':
+          description: Server error
   /lists:
     get:
       summary: Get all lists
