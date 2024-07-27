@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
     }
     const emailExist = await user_1.default.findOne({ email: req.body.email });
     if (emailExist)
-        return res.status(400).json({ message: "Email already exists" });
+        return res.status(400).json({ message: "Email already exists. Please enter a different Email" });
     // Hash the password
     const salt = await bcrypt_1.default.genSalt(10);
     const hashedPassword = await bcrypt_1.default.hash(req.body.password, salt);
@@ -41,7 +41,7 @@ router.post("/register", async (req, res) => {
     });
     try {
         const savedUser = await user.save();
-        res.status(201).json({ user: savedUser._id });
+        res.status(201).json({ message: "User registered successfully", user: savedUser._id });
     }
     catch (err) {
         res.status(400).json({ message: err.message });

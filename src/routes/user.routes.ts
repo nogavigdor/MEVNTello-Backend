@@ -29,7 +29,7 @@ router.post("/register", async (req, res) => {
 
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist)
-    return res.status(400).json({ message: "Email already exists" });
+    return res.status(400).json({ message: "Email already exists. Please enter a different Email" });
 
   // Hash the password
   const salt = await bcrypt.genSalt(10);
@@ -44,7 +44,7 @@ router.post("/register", async (req, res) => {
 
   try {
     const savedUser = await user.save();
-    res.status(201).json({ user: savedUser._id });
+    res.status(201).json({user: savedUser._id });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
