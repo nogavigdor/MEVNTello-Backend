@@ -28,34 +28,35 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
     }
 });
 
-// Get all tasks for a specific list (id is the list ID)
-router.get('/list/:id', verifyToken as RequestHandler, isAdmin, async (req, res) => {
+// Get all tasks for a specific list (id is the list ID) -all project memebers can see the tasks
+router.get('/list/:id', verifyToken as RequestHandler, async (req, res) => {
     try {
         const tasks = await Task.find({ listId: req.params.id });
 
-        if (!tasks) return res.status(404).json({ message: 'Tasks not found' });
+        if (!tasks || tasks.length === 0) return res.status(404).json({ message: 'Tasks not found' });
 
-        // Check if the user is a member of the project
-        const list = await List.findById(req.params.id);
-        if (!list) return res.status(404).json({ message: 'List not found' });
+        const customReq = req as CustomRequest;
+        const userId = customReq.user._id;
+        const isAdmin = customReq.user.role === 'admin';
 
-        const projectId = list.projectId;
-        const userId = (req as CustomRequest).user._id;
-        const project = await Project.findById(projectId);
+        // If the user is not an admin, check if they are a member or leader of the project
+        if (!isAdmin) {
+            const list = await List.findById(req.params.id);
+            if (!list) return res.status(404).json({ message: 'List not found' });
 
-        if (!project) {
-            return res.status(404).json({ message: "Project not found" });
-        }
+            const projectId = list.projectId;
+            const project = await Project.findById(projectId);
 
+            if (!project) {
+                return res.status(404).json({ message: "Project not found" });
+            }
 
-        //checks if the user is a member or leader
-        const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === userId);
-    
-         // Check if the user is an admin
-        const user = await User.findById(userId);
+            // Check if the user is a member or leader of the project
+            const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === userId);
 
-        if (!isMemberOrLeader) {
-            return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+            if (!isMemberOrLeader) {
+                return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+            }
         }
 
         res.json(tasks);
@@ -68,6 +69,7 @@ router.get('/list/:id', verifyToken as RequestHandler, isAdmin, async (req, res)
     }
 });
 
+
 // Create a new task (only by project leaders or admins)
 router.post('/:listId', verifyToken as RequestHandler, isAdmin, async (req, res, next) => {
     const customReq = req as CustomRequest;
@@ -77,11 +79,14 @@ router.post('/:listId', verifyToken as RequestHandler, isAdmin, async (req, res,
         const list = await List.findById(listId);
         if (!list) return res.status(404).json({ message: 'List not found' });
 
-        // Add projectId to the body for isLeader middleware
-        req.body.projectId = list.projectId;
+        const project = await Project.findById(list.projectId);
+        if (!project) return res.status(404).json({ message: 'Project not found' });
+        //checks if the user is a member or leader
+        const isLeader = project.teamMembers.some(member => member.role === 'leader' && member._id.toString() === customReq.user._id);
 
-        // Verify if the user is a leader of the project
-        isLeader(req, res, next);
+        if (!isLeader) {
+            return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
+        }
 
         const { error } = taskValidation(req.body);
         if (error) return res.status(400).json({ message: error.details[0].message });
@@ -102,8 +107,8 @@ router.post('/:listId', verifyToken as RequestHandler, isAdmin, async (req, res,
     }
 });
 
-// Update a task - id is the task ID, only task members can update hoursUsed, other updates are allowed only for the project leader or admin
-router.put('/:id', verifyToken as RequestHandler, isAdmin, async (req, res, next) => {
+/// Update a task - id is the task ID, only task members can update hoursUsed, other updates are allowed only for the project leader or admin
+router.put('/:id', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
     const { error } = taskValidation(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
@@ -115,41 +120,36 @@ router.put('/:id', verifyToken as RequestHandler, isAdmin, async (req, res, next
         const list = await List.findById(task.listId);
         if (!list) return res.status(404).json({ message: 'List not found' });
 
-        // Add projectId to the body for isLeader middleware
-        req.body.projectId = list.projectId;
+        const project = await Project.findById(list.projectId);
+        if (!project) return res.status(404).json({ message: 'Project not found' });
 
-        // Check if the update includes hoursUsed
-        if ('hoursUsed' in req.body) {
-            // Only task members can update hoursUsed
-            await isTaskMember(req, res, async () => {
-                try {
-                    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-                    if (!updatedTask) return res.status(404).json({ message: "Task not found" });
-                    res.json(updatedTask);
-                } catch (err: unknown) {
-                    if (err instanceof Error) {
-                        res.status(400).json({ message: err.message });
-                    } else {
-                        res.status(400).json({ message: 'An unknown error occurred' });
-                    }
-                }
-            });
-        } else {
-            // Other updates are allowed only for the leader
-            await isLeader(req, res, async () => {
-                try {
-                    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
-                    if (!updatedTask) return res.status(404).json({ message: "Task not found" });
-                    res.json(updatedTask);
-                } catch (err: unknown) {
-                    if (err instanceof Error) {
-                        res.status(400).json({ message: err.message });
-                    } else {
-                        res.status(400).json({ message: 'An unknown error occurred' });
-                    }
-                }
-            });
+        const userId = customReq.user._id;
+
+        // Check if the user is an admin
+        const isAdmin = customReq.user.role === 'admin';
+
+        // Check if the user is a project leader
+        const isLeader = project.teamMembers.some(member => member._id.toString() === userId.toString() && member.role === 'leader');
+
+        // Check if the user is an assigned member of the task
+        const isTaskMember = task.assignedMembers.some(memberId => memberId.toString() === userId.toString());
+
+        // If the user is a project leader or admin, allow all updates
+        if (isAdmin || isLeader) {
+            const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+            if (!updatedTask) return res.status(404).json({ message: "Task not found" });
+            return res.json(updatedTask);
         }
+
+        // If the request body only contains hoursUsed, allow task members to update
+        if (Object.keys(req.body).length === 1 && 'hoursUsed' in req.body && isTaskMember) {
+            const updatedTask = await Task.findByIdAndUpdate(req.params.id, { hoursUsed: req.body.hoursUsed }, { new: true });
+            if (!updatedTask) return res.status(404).json({ message: "Task not found" });
+            return res.json(updatedTask);
+        }
+
+        return res.status(403).json({ message: 'Access denied. Only project leaders, admins, or task members can update hoursUsed.' });
+
     } catch (err: unknown) {
         if (err instanceof Error) {
             res.status(500).json({ message: err.message });
@@ -159,8 +159,9 @@ router.put('/:id', verifyToken as RequestHandler, isAdmin, async (req, res, next
     }
 });
 
+
 // Delete a task
-router.delete('/:id', verifyToken as RequestHandler, isAdmin, async (req, res, next) => {
+router.delete('/:id', verifyToken as RequestHandler, async (req, res, next) => {
     const customReq = req as CustomRequest;
 
     try {
@@ -170,16 +171,20 @@ router.delete('/:id', verifyToken as RequestHandler, isAdmin, async (req, res, n
         const list = await List.findById(task.listId);
         if (!list) return res.status(404).json({ message: 'List not found' });
 
-        //check if the user is a leader
         const project = await Project.findById(list.projectId);
         if (!project) return res.status(404).json({ message: 'Project not found' });
 
+        // Check if the user is an admin
+        const isAdmin = customReq.user.role === 'admin';
+
+        // Check if the user is a project leader
         const isLeader = project.teamMembers.some(member => member._id.toString() === customReq.user._id && member.role === 'leader');
 
-        if (!isLeader) {
-            return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
+        //only admin or a project leader can delete a task
+        if (!isAdmin && !isLeader) {
+            return res.status(403).json({ message: 'Access Denied: You are not authorized to delete this task' });
         }
-        
+
         const removedTask = await Task.findByIdAndDelete(req.params.id);
         if (!removedTask) return res.status(404).json({ message: "Task not found" });
         res.json({ message: "Task deleted" });
@@ -191,6 +196,7 @@ router.delete('/:id', verifyToken as RequestHandler, isAdmin, async (req, res, n
         }
     }
 });
+
 
 // CRUD operations for subtasks
 
