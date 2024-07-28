@@ -1,11 +1,12 @@
 import express from 'express';
 import { Types } from 'mongoose';
-import { verifyToken, isLeader, isTaskMember } from '../middleware';
+import { verifyToken, isLeader,  isTaskMember } from '../middleware';
 import { taskValidation } from '../validation';
 import Task from '../models/task';
 import List from '../models/list';
 import { RequestHandler } from 'express';
 import  ISubTask  from '../interfaces/ISubTask';
+import Project from '../models/project';
 import { CustomRequest } from '../interfaces/ICustomRequest';
 
 const router = express.Router();
@@ -30,6 +31,26 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
 router.get('/list/:id', verifyToken as RequestHandler, async (req, res) => {
     try {
         const tasks = await Task.find({ listId: req.params.id });
+
+        if (!tasks) return res.status(404).json({ message: 'Tasks not found' });
+
+        // Check if the user is a member of the project
+        const list = await List.findById(req.params.id);
+        if (!list) return res.status(404).json({ message: 'List not found' });
+
+        const projectId = list.projectId;
+        const project = await Project.findById(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        //checks if the user is a member or leader
+        const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === (req as CustomRequest).user._id);
+    
+        if (!isMemberOrLeader) {
+            return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+        }
+
         res.json(tasks);
     } catch (err: unknown) {
         if (err instanceof Error) {

@@ -8,11 +8,6 @@ const middleware_1 = require("../middleware");
 const validation_1 = require("../validation");
 const project_1 = __importDefault(require("../models/project"));
 const router = express_1.default.Router();
-// Middleware to log each request
-router.use((req, res, next) => {
-    console.log(`Received request: ${req.method} ${req.originalUrl}`);
-    next();
-});
 // Get all projects
 router.get('/', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;

@@ -26,6 +26,17 @@ router.get('/:id', middleware_1.verifyToken, async (req, res) => {
         const list = await list_1.default.findById(req.params.id);
         if (!list)
             return res.status(404).json({ message: 'List not found' });
+        const projectId = list.projectId;
+        //find the project to check if the user is included in the team
+        const project = await project_1.default.findById(projectId);
+        if (!project)
+            return res.status(404).json({ message: 'Project not found' });
+        //checks if the user is a member of the project
+        const isMember = project.teamMembers.some(member => member._id.toString() === req.user._id);
+        //if the user is not a member of the project
+        if (!isMember)
+            return res.status(403).json({ message: 'Access Denied: You are not a member of this project' });
+        //return the list
         res.json(list);
     }
     catch (err) {
