@@ -9,6 +9,8 @@ const middleware_1 = require("../middleware");
 const validation_1 = require("../validation");
 const task_1 = __importDefault(require("../models/task"));
 const list_1 = __importDefault(require("../models/list"));
+const project_1 = __importDefault(require("../models/project"));
+const user_1 = __importDefault(require("../models/user"));
 const router = express_1.default.Router();
 // Get all tasks assigned to the authenticated user
 router.get('/', middleware_1.verifyToken, async (req, res) => {
@@ -27,9 +29,28 @@ router.get('/', middleware_1.verifyToken, async (req, res) => {
     }
 });
 // Get all tasks for a specific list (id is the list ID)
-router.get('/list/:id', middleware_1.verifyToken, async (req, res) => {
+router.get('/list/:id', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res) => {
     try {
         const tasks = await task_1.default.find({ listId: req.params.id });
+        if (!tasks)
+            return res.status(404).json({ message: 'Tasks not found' });
+        // Check if the user is a member of the project
+        const list = await list_1.default.findById(req.params.id);
+        if (!list)
+            return res.status(404).json({ message: 'List not found' });
+        const projectId = list.projectId;
+        const userId = req.user._id;
+        const project = await project_1.default.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+        //checks if the user is a member or leader
+        const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === userId);
+        // Check if the user is an admin
+        const user = await user_1.default.findById(userId);
+        if (!isMemberOrLeader) {
+            return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+        }
         res.json(tasks);
     }
     catch (err) {
@@ -41,8 +62,8 @@ router.get('/list/:id', middleware_1.verifyToken, async (req, res) => {
         }
     }
 });
-// Create a new task (only by leaders)
-router.post('/:listId', middleware_1.verifyToken, async (req, res, next) => {
+// Create a new task (only by project leaders or admins)
+router.post('/:listId', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res, next) => {
     const customReq = req;
     const listId = req.params.listId;
     try {
@@ -52,7 +73,7 @@ router.post('/:listId', middleware_1.verifyToken, async (req, res, next) => {
         // Add projectId to the body for isLeader middleware
         req.body.projectId = list.projectId;
         // Verify if the user is a leader of the project
-        await (0, middleware_1.isLeader)(req, res, next);
+        (0, middleware_1.isLeader)(req, res, next);
         const { error } = (0, validation_1.taskValidation)(req.body);
         if (error)
             return res.status(400).json({ message: error.details[0].message });
@@ -72,8 +93,8 @@ router.post('/:listId', middleware_1.verifyToken, async (req, res, next) => {
         }
     }
 });
-// Update a task - id is the task ID, only task members can update hoursUsed, other updates are allowed only for the leader
-router.put('/:id', middleware_1.verifyToken, async (req, res, next) => {
+// Update a task - id is the task ID, only task members can update hoursUsed, other updates are allowed only for the project leader or admin
+router.put('/:id', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res, next) => {
     const customReq = req;
     const { error } = (0, validation_1.taskValidation)(req.body);
     if (error)
@@ -137,7 +158,7 @@ router.put('/:id', middleware_1.verifyToken, async (req, res, next) => {
     }
 });
 // Delete a task
-router.delete('/:id', middleware_1.verifyToken, async (req, res, next) => {
+router.delete('/:id', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res, next) => {
     const customReq = req;
     try {
         const task = await task_1.default.findById(req.params.id);
@@ -146,9 +167,14 @@ router.delete('/:id', middleware_1.verifyToken, async (req, res, next) => {
         const list = await list_1.default.findById(task.listId);
         if (!list)
             return res.status(404).json({ message: 'List not found' });
-        // Add projectId to the body for isLeader middleware
-        req.body.projectId = list.projectId;
-        await (0, middleware_1.isLeader)(req, res, next);
+        //check if the user is a leader
+        const project = await project_1.default.findById(list.projectId);
+        if (!project)
+            return res.status(404).json({ message: 'Project not found' });
+        const isLeader = project.teamMembers.some(member => member._id.toString() === customReq.user._id && member.role === 'leader');
+        if (!isLeader) {
+            return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
+        }
         const removedTask = await task_1.default.findByIdAndDelete(req.params.id);
         if (!removedTask)
             return res.status(404).json({ message: "Task not found" });

@@ -40,7 +40,7 @@ const isAdmin: RequestHandler = async (req, res, next) => {
     next();
 };
 
-// Check if the user is a  leader (only for project routes)
+// Check if the user is a  leader - when project id is a parameter or in the request body
 const isLeader: RequestHandler = async (req, res, next) => {
     const projectId = req.params.id || req.body.projectId; 
 

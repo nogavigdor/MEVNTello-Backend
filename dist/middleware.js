@@ -31,13 +31,13 @@ const isAdmin = async (req, res, next) => {
     if (!user) {
         return res.status(404).json({ message: "User not found" });
     }
-    if (user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access Denied: You are not an admin' });
+    if (user.role === 'admin') {
+        return next(); // If the user is admin, skip the next middleware
     }
     next();
 };
 exports.isAdmin = isAdmin;
-// Check if the user is a  leader (only for project routes)
+// Check if the user is a  leader - when project id is a parameter or in the request body
 const isLeader = async (req, res, next) => {
     const projectId = req.params.id || req.body.projectId;
     if (!projectId) {
