@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const middleware_1 = require("../middleware");
 const validation_1 = require("../validation");
 const project_1 = __importDefault(require("../models/project"));
 const router = express_1.default.Router();
@@ -13,7 +14,7 @@ router.use((req, res, next) => {
     next();
 });
 // Get all projects
-router.get('/', validation_1.verifyToken, async (req, res) => {
+router.get('/', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
     try {
         const projects = await project_1.default.find({
@@ -31,7 +32,7 @@ router.get('/', validation_1.verifyToken, async (req, res) => {
     }
 });
 //Get all projects for a specific user
-router.get('/user/:id', validation_1.verifyToken, async (req, res) => {
+router.get('/user/:id', middleware_1.verifyToken, async (req, res) => {
     try {
         console.log('Route /user/:id matched');
         console.log('Fetching projects for user:', req.params.id);
@@ -50,7 +51,7 @@ router.get('/user/:id', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Get a specific project (id is the project ID)
-router.get('/:id', validation_1.verifyToken, validation_1.isMemberOrLeader, async (req, res) => {
+router.get('/:id', middleware_1.verifyToken, middleware_1.isMemberOrLeader, async (req, res) => {
     try {
         const project = await project_1.default.findById(req.params.id);
         if (!project)
@@ -67,7 +68,7 @@ router.get('/:id', validation_1.verifyToken, validation_1.isMemberOrLeader, asyn
     }
 });
 // Create a new project
-router.post('/', validation_1.verifyToken, async (req, res) => {
+router.post('/', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
     console.log('User from token:', customReq.user); // Log the user from the token
     const { error } = (0, validation_1.projectValidation)(req.body);
@@ -107,7 +108,7 @@ router.post('/', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Update a project (id is the project ID)
-router.put('/:id', validation_1.verifyToken, validation_1.isLeader, async (req, res) => {
+router.put('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, res) => {
     const { error } = (0, validation_1.projectValidation)(req.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
@@ -127,7 +128,7 @@ router.put('/:id', validation_1.verifyToken, validation_1.isLeader, async (req, 
     }
 });
 // Delete a project (id is the project ID)
-router.delete('/:id', validation_1.verifyToken, validation_1.isLeader, async (req, res) => {
+router.delete('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, res) => {
     try {
         const removedProject = await project_1.default.findByIdAndDelete(req.params.id);
         if (!removedProject)

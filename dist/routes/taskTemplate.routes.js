@@ -5,12 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // src/routes/taskTemplate.routes.ts
 const express_1 = __importDefault(require("express"));
-const validation_1 = require("../validation");
-const validation_2 = require("../validation");
+const middleware_1 = require("../middleware");
 const taskTemplate_1 = __importDefault(require("../models/taskTemplate"));
 const router = express_1.default.Router();
 // Create a new task template (Admin only)
-router.post('/', validation_1.verifyToken, validation_2.isAdmin, async (req, res) => {
+router.post('/', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res) => {
     const { name, lists } = req.body;
     const taskTemplate = new taskTemplate_1.default({ name, lists });
     try {
@@ -22,7 +21,7 @@ router.post('/', validation_1.verifyToken, validation_2.isAdmin, async (req, res
     }
 });
 // Fetch all task templates
-router.get('/', validation_1.verifyToken, async (req, res) => {
+router.get('/', middleware_1.verifyToken, async (req, res) => {
     try {
         const templates = await taskTemplate_1.default.find();
         res.json(templates);
@@ -32,7 +31,7 @@ router.get('/', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Fetch a single task template by ID
-router.get('/:id', validation_1.verifyToken, async (req, res) => {
+router.get('/:id', middleware_1.verifyToken, async (req, res) => {
     try {
         const template = await taskTemplate_1.default.findById(req.params.id);
         if (!template)
@@ -44,7 +43,7 @@ router.get('/:id', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Update a task template (Admin only)
-router.put('/:id', validation_1.verifyToken, validation_2.isAdmin, async (req, res) => {
+router.put('/:id', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res) => {
     const { name, lists } = req.body;
     try {
         const updatedTemplate = await taskTemplate_1.default.findByIdAndUpdate(req.params.id, { name, lists }, { new: true });
@@ -57,7 +56,7 @@ router.put('/:id', validation_1.verifyToken, validation_2.isAdmin, async (req, r
     }
 });
 // Delete a task template (Admin only)
-router.delete('/:id', validation_1.verifyToken, validation_2.isAdmin, async (req, res) => {
+router.delete('/:id', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res) => {
     try {
         const removedTemplate = await taskTemplate_1.default.findByIdAndDelete(req.params.id);
         if (!removedTemplate)

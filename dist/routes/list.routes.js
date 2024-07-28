@@ -4,13 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const validation_1 = require("../validation");
+const middleware_1 = require("../middleware");
 const list_1 = __importDefault(require("../models/list"));
 const project_1 = __importDefault(require("../models/project"));
-const validation_2 = require("../validation");
+const validation_1 = require("../validation");
 const router = express_1.default.Router();
 // Get all lists for a project (id is the project ID)
-router.get('/project/:id', validation_1.verifyToken, validation_1.isMemberOrLeader, async (req, res) => {
+router.get('/project/:id', middleware_1.verifyToken, middleware_1.isMemberOrLeader, async (req, res) => {
     try {
         // Get all lists for the project
         const lists = await list_1.default.find({ projectId: req.params.projectId });
@@ -21,7 +21,7 @@ router.get('/project/:id', validation_1.verifyToken, validation_1.isMemberOrLead
     }
 });
 // Get a specific list (id is the list ID)
-router.get('/:id', validation_1.verifyToken, async (req, res) => {
+router.get('/:id', middleware_1.verifyToken, async (req, res) => {
     try {
         const list = await list_1.default.findById(req.params.id);
         if (!list)
@@ -33,9 +33,9 @@ router.get('/:id', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Create a new list
-router.post('/', validation_1.verifyToken, validation_1.isLeader, async (req, res) => {
+router.post('/', middleware_1.verifyToken, middleware_1.isLeader, async (req, res) => {
     const customReq = req;
-    const { error } = (0, validation_2.listValidation)(customReq.body);
+    const { error } = (0, validation_1.listValidation)(customReq.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
     const projectId = customReq.body.projectId;
@@ -56,9 +56,9 @@ router.post('/', validation_1.verifyToken, validation_1.isLeader, async (req, re
     }
 });
 // Update a list (id is the list ID)
-router.put('/:id', validation_1.verifyToken, async (req, res) => {
+router.put('/:id', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
-    const { error } = (0, validation_2.listValidation)(customReq.body);
+    const { error } = (0, validation_1.listValidation)(customReq.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
     try {
@@ -81,7 +81,7 @@ router.put('/:id', validation_1.verifyToken, async (req, res) => {
     }
 });
 // Delete a list (id is the list ID)
-router.delete('/:id', validation_1.verifyToken, async (req, res) => {
+router.delete('/:id', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
     try {
         const list = await list_1.default.findById(customReq.params.id);

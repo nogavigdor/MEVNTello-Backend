@@ -1,7 +1,7 @@
 // src/routes/taskTemplate.routes.ts
 import express, { RequestHandler } from 'express';
-import { verifyToken } from '../validation';
-import { isAdmin } from '../validation';
+import { verifyToken, isAdmin } from '../middleware';
+
 
 import TaskTemplate from '../models/taskTemplate';
 

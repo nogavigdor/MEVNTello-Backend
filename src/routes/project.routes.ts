@@ -1,5 +1,6 @@
 import express from 'express';
-import { verifyToken, isLeader, isProjectMember, projectValidation, isMemberOrLeader } from '../validation';
+import { verifyToken, isLeader, isProjectMember, isMemberOrLeader } from '../middleware';
+import { projectValidation } from '../validation';
 import Project from '../models/project';
 import { RequestHandler } from 'express';
 import { CustomRequest } from '../interfaces/ICustomRequest';

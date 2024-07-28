@@ -7,10 +7,11 @@ const express_1 = __importDefault(require("express"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const validation_1 = require("../validation");
+const middleware_1 = require("../middleware");
 const user_1 = __importDefault(require("../models/user"));
 const router = express_1.default.Router();
 // Get all users with specific fields
-router.get("/", validation_1.verifyToken, async (req, res) => {
+router.get("/", middleware_1.verifyToken, async (req, res) => {
     try {
         // Use MongoDB projection to select only the _id, username, and email fields
         const users = await user_1.default.find({}, '_id username email').exec();
@@ -73,7 +74,7 @@ router.post("/login", async (req, res) => {
     });
 });
 // Authenticated User Details Route
-router.get('/me', validation_1.verifyToken, async (req, res) => {
+router.get('/me', middleware_1.verifyToken, async (req, res) => {
     try {
         const customReq = req;
         const user = await user_1.default.findById(customReq.user._id, '_id username email');

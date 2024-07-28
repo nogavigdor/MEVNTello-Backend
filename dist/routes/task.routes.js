@@ -5,12 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = require("mongoose");
+const middleware_1 = require("../middleware");
 const validation_1 = require("../validation");
 const task_1 = __importDefault(require("../models/task"));
 const list_1 = __importDefault(require("../models/list"));
 const router = express_1.default.Router();
 // Get all tasks assigned to the authenticated user
-router.get('/', validation_1.verifyToken, async (req, res) => {
+router.get('/', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
     try {
         const tasks = await task_1.default.find({ assignedMembers: customReq.user._id });
@@ -25,8 +26,23 @@ router.get('/', validation_1.verifyToken, async (req, res) => {
         }
     }
 });
+// Get all tasks for a specific list (id is the list ID)
+router.get('/list/:id', middleware_1.verifyToken, async (req, res) => {
+    try {
+        const tasks = await task_1.default.find({ listId: req.params.id });
+        res.json(tasks);
+    }
+    catch (err) {
+        if (err instanceof Error) {
+            res.status(500).json({ message: err.message });
+        }
+        else {
+            res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    }
+});
 // Create a new task (only by leaders)
-router.post('/:listId', validation_1.verifyToken, async (req, res, next) => {
+router.post('/:listId', middleware_1.verifyToken, async (req, res, next) => {
     const customReq = req;
     const listId = req.params.listId;
     try {
@@ -36,7 +52,7 @@ router.post('/:listId', validation_1.verifyToken, async (req, res, next) => {
         // Add projectId to the body for isLeader middleware
         req.body.projectId = list.projectId;
         // Verify if the user is a leader of the project
-        await (0, validation_1.isLeader)(req, res, next);
+        await (0, middleware_1.isLeader)(req, res, next);
         const { error } = (0, validation_1.taskValidation)(req.body);
         if (error)
             return res.status(400).json({ message: error.details[0].message });
@@ -57,7 +73,7 @@ router.post('/:listId', validation_1.verifyToken, async (req, res, next) => {
     }
 });
 // Update a task - id is the task ID, only task members can update hoursUsed, other updates are allowed only for the leader
-router.put('/:id', validation_1.verifyToken, async (req, res, next) => {
+router.put('/:id', middleware_1.verifyToken, async (req, res, next) => {
     const customReq = req;
     const { error } = (0, validation_1.taskValidation)(req.body);
     if (error)
@@ -74,7 +90,7 @@ router.put('/:id', validation_1.verifyToken, async (req, res, next) => {
         // Check if the update includes hoursUsed
         if ('hoursUsed' in req.body) {
             // Only task members can update hoursUsed
-            await (0, validation_1.isTaskMember)(req, res, async () => {
+            await (0, middleware_1.isTaskMember)(req, res, async () => {
                 try {
                     const updatedTask = await task_1.default.findByIdAndUpdate(req.params.id, req.body, { new: true });
                     if (!updatedTask)
@@ -93,7 +109,7 @@ router.put('/:id', validation_1.verifyToken, async (req, res, next) => {
         }
         else {
             // Other updates are allowed only for the leader
-            await (0, validation_1.isLeader)(req, res, async () => {
+            await (0, middleware_1.isLeader)(req, res, async () => {
                 try {
                     const updatedTask = await task_1.default.findByIdAndUpdate(req.params.id, req.body, { new: true });
                     if (!updatedTask)
@@ -121,7 +137,7 @@ router.put('/:id', validation_1.verifyToken, async (req, res, next) => {
     }
 });
 // Delete a task
-router.delete('/:id', validation_1.verifyToken, async (req, res, next) => {
+router.delete('/:id', middleware_1.verifyToken, async (req, res, next) => {
     const customReq = req;
     try {
         const task = await task_1.default.findById(req.params.id);
@@ -132,7 +148,7 @@ router.delete('/:id', validation_1.verifyToken, async (req, res, next) => {
             return res.status(404).json({ message: 'List not found' });
         // Add projectId to the body for isLeader middleware
         req.body.projectId = list.projectId;
-        await (0, validation_1.isLeader)(req, res, next);
+        await (0, middleware_1.isLeader)(req, res, next);
         const removedTask = await task_1.default.findByIdAndDelete(req.params.id);
         if (!removedTask)
             return res.status(404).json({ message: "Task not found" });
@@ -149,7 +165,7 @@ router.delete('/:id', validation_1.verifyToken, async (req, res, next) => {
 });
 // CRUD operations for subtasks
 // Create a new subtask
-router.post('/:taskId/subtasks', validation_1.verifyToken, validation_1.isTaskMember, async (req, res) => {
+router.post('/:taskId/subtasks', middleware_1.verifyToken, middleware_1.isTaskMember, async (req, res) => {
     const { taskId } = req.params;
     const { name, completed } = req.body;
     try {
@@ -171,7 +187,7 @@ router.post('/:taskId/subtasks', validation_1.verifyToken, validation_1.isTaskMe
     }
 });
 // Read all subtasks
-router.get('/:taskId/subtasks', validation_1.verifyToken, validation_1.isTaskMember, async (req, res) => {
+router.get('/:taskId/subtasks', middleware_1.verifyToken, middleware_1.isTaskMember, async (req, res) => {
     const { taskId } = req.params;
     try {
         const task = await task_1.default.findById(taskId);
@@ -189,7 +205,7 @@ router.get('/:taskId/subtasks', validation_1.verifyToken, validation_1.isTaskMem
     }
 });
 // Update a subtask
-router.put('/:taskId/subtasks/:subtaskId', validation_1.verifyToken, validation_1.isTaskMember, async (req, res) => {
+router.put('/:taskId/subtasks/:subtaskId', middleware_1.verifyToken, middleware_1.isTaskMember, async (req, res) => {
     const { taskId, subtaskId } = req.params;
     const { name, completed } = req.body;
     try {
@@ -216,7 +232,7 @@ router.put('/:taskId/subtasks/:subtaskId', validation_1.verifyToken, validation_
     }
 });
 // Delete a subtask
-router.delete('/:taskId/subtasks/:subtaskId', validation_1.verifyToken, validation_1.isTaskMember, async (req, res) => {
+router.delete('/:taskId/subtasks/:subtaskId', middleware_1.verifyToken, middleware_1.isTaskMember, async (req, res) => {
     const { taskId, subtaskId } = req.params;
     try {
         const task = await task_1.default.findById(taskId);

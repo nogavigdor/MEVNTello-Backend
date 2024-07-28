@@ -1,7 +1,8 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { registerValidation, loginValidation, verifyToken } from "../validation";
+import { registerValidation, loginValidation} from "../validation";
+import { verifyToken } from "../middleware";
 import { RequestHandler } from "express";
 import User from "../models/user";
 import { CustomRequest } from "../interfaces/ICustomRequest";

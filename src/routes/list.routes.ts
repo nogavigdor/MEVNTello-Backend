@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction, RequestHandler } from 'express';
-import { verifyToken, isProjectMember, isLeader, isMemberOrLeader } from '../validation';
+import { verifyToken, isProjectMember, isLeader, isMemberOrLeader } from '../middleware';
 import List from '../models/list';
 import Project from '../models/project';
 import { listValidation } from '../validation';

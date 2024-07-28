@@ -1,6 +1,7 @@
 import express from 'express';
 import { Types } from 'mongoose';
-import { verifyToken, isLeader, isTaskMember, taskValidation } from '../validation';
+import { verifyToken, isLeader, isTaskMember } from '../middleware';
+import { taskValidation } from '../validation';
 import Task from '../models/task';
 import List from '../models/list';
 import { RequestHandler } from 'express';
@@ -15,6 +16,20 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
     try {
         const tasks = await Task.find({ assignedMembers: customReq.user._id });
+        res.json(tasks);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    }
+});
+
+// Get all tasks for a specific list (id is the list ID)
+router.get('/list/:id', verifyToken as RequestHandler, async (req, res) => {
+    try {
+        const tasks = await Task.find({ listId: req.params.id });
         res.json(tasks);
     } catch (err: unknown) {
         if (err instanceof Error) {
