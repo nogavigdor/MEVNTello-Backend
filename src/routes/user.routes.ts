@@ -5,6 +5,7 @@ import { registerValidation, loginValidation, verifyToken } from "../validation"
 import { RequestHandler } from "express";
 import User from "../models/user";
 import { CustomRequest } from "../interfaces/ICustomRequest";
+import user from "../models/user";
 
 const router = express.Router();
 

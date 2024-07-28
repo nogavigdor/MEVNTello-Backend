@@ -11,6 +11,7 @@ export interface IProject {
   startDate: Date;
   endDate: Date;
   allocatedHours: number;
+  creator: Types.ObjectId; // User ID of the creator
   teamMembers: TeamMember[]; // Array of objects of User IDs with roles
   lists?: Types.ObjectId[]; // Optional array of List IDs
   createdAt?: Date; 

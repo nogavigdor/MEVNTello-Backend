@@ -3,11 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isTaskMember = exports.isMemberOrLeader = exports.isProjectMember = exports.isLeader = exports.taskValidation = exports.listValidation = exports.projectValidation = exports.verifyToken = exports.loginValidation = exports.registerValidation = void 0;
+exports.isAdmin = exports.isTaskMember = exports.isMemberOrLeader = exports.isProjectMember = exports.isLeader = exports.taskValidation = exports.listValidation = exports.projectValidation = exports.verifyToken = exports.loginValidation = exports.registerValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const project_1 = __importDefault(require("./models/project"));
 const task_1 = __importDefault(require("./models/task"));
+const user_1 = __importDefault(require("./models/user")); // Import the User model
 // Project Validation Schema
 const projectValidation = (data) => {
     const schema = joi_1.default.object({
@@ -97,6 +98,19 @@ const verifyToken = (req, res, next) => {
     }
 };
 exports.verifyToken = verifyToken;
+//check if the user is an admin
+const isAdmin = async (req, res, next) => {
+    //find the user by id
+    const user = await user_1.default.findById(req.user._id);
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+    if (user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access Denied: You are not an admin' });
+    }
+    next();
+};
+exports.isAdmin = isAdmin;
 // Check if the user is a  leader
 const isLeader = async (req, res, next) => {
     const projectId = req.params.id || req.body.projectId;

@@ -4,6 +4,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import Project from './models/project'; 
 import List from './models/list';
 import Task from './models/task';
+import User from './models/user'; // Import the User model
 import { ProjectDocument } from './interfaces/IProject';
 import { ListDocument } from './interfaces/IList';
 import { TaskDocument } from './interfaces/ITask';
@@ -110,6 +111,23 @@ const verifyToken = (req: CustomRequest, res: Response, next: NextFunction) => {
     }
 };
 
+//check if the user is an admin
+const isAdmin: RequestHandler = async (req, res, next) => {
+
+    //find the user by id
+    const user = await User.findById((req as CustomRequest).user._id);
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.role !== 'admin') {
+        return res.status(403).json({ message: 'Access Denied: You are not an admin' });
+    }
+
+    next();
+};
+
 // Check if the user is a  leader
 const isLeader: RequestHandler = async (req, res, next) => {
     const projectId = req.params.id || req.body.projectId; 
@@ -193,4 +211,4 @@ const isTaskMember: RequestHandler = async (req, res, next) => {
     next();
 };
 
-export { registerValidation, loginValidation, verifyToken, projectValidation, listValidation, taskValidation, isLeader, isProjectMember, isMemberOrLeader, isTaskMember };
+export { registerValidation, loginValidation, verifyToken, projectValidation, listValidation, taskValidation, isLeader, isProjectMember, isMemberOrLeader, isTaskMember, isAdmin };

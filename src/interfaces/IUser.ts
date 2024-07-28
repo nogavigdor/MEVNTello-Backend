@@ -4,6 +4,7 @@ import { Document, Types } from 'mongoose';
 export interface IUser {
   _id: Types.ObjectId;
   username: string;
+  role: 'user' | 'admin';
   email: string;
   password: string;
   createdAt?: Date;

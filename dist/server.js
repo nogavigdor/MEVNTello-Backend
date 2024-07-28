@@ -16,6 +16,7 @@ const project_routes_1 = __importDefault(require("./routes/project.routes"));
 const task_routes_1 = __importDefault(require("./routes/task.routes"));
 const list_routes_1 = __importDefault(require("./routes/list.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
+const taskTemplate_routes_1 = __importDefault(require("./routes/taskTemplate.routes"));
 dotenv_flow_1.default.config(); // Load environment variables
 const app = (0, express_1.default)();
 // Middleware setup for CORS
@@ -85,6 +86,7 @@ app.use("/api/projects", project_routes_1.default);
 app.use("/api/tasks", task_routes_1.default);
 app.use("/api/lists", list_routes_1.default);
 app.use("/api/users", user_routes_1.default);
+app.use('/api/taskTemplates', taskTemplate_routes_1.default);
 // Handle 404 errors
 app.use("/", (req, res) => {
     res.status(404).send({ message: "Page not found" });

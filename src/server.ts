@@ -12,6 +12,7 @@ import projectRoutes from './routes/project.routes';
 import taskRoutes from './routes/task.routes';
 import listRoutes from './routes/list.routes'; 
 import authRoutes from './routes/user.routes';
+import taskTemplateRoutes from './routes/taskTemplate.routes';
 
 dotenvFlow.config(); // Load environment variables
 
@@ -95,6 +96,7 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/lists", listRoutes); 
 app.use("/api/users", authRoutes);
+app.use('/api/taskTemplates', taskTemplateRoutes);
 
 // Handle 404 errors
 app.use("/", (req: Request, res: Response) => {

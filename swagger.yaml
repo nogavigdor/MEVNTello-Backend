@@ -18,6 +18,8 @@ tags:
     description: Routes for list management
   - name: Task
     description: Routes for task management
+  - name: Task Template
+    description: Routes for task template management
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -703,5 +705,114 @@ paths:
           description: Subtask deleted successfully
         '404':
           description: Subtask not found
+        '500':
+          description: Server error
+  /taskTemplates:
+    get:
+      summary: Get all task templates
+      tags:
+        - Task Template
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Successfully retrieved task templates
+        '500':
+          description: Server error
+    post:
+      summary: Create a new task template
+      tags:
+        - Task Template
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                lists:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '201':
+          description: Task template created successfully
+        '400':
+          description: Bad request
+  /taskTemplates/{id}:
+    get:
+      summary: Get a task template by ID
+      tags:
+        - Task Template
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved task template
+        '404':
+          description: Task template not found
+        '500':
+          description: Server error
+    put:
+      summary: Update a task template
+      tags:
+        - Task Template
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                lists:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Task template updated successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Task template not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a task template
+      tags:
+        - Task Template
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task template deleted successfully
+        '404':
+          description: Task template not found
         '500':
           description: Server error
