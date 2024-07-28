@@ -74,8 +74,8 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     // Destructure the request body
-    const { name, description, startDate, endDate, allocatedHours, teamMembers } = req.body;
-
+    const { name, description, startDate, endDate, allocatedHours, teamMembers, creator } = req.body;
+    
     // Create a new project
     const project = new Project({
         name,
@@ -83,6 +83,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
         startDate,
         endDate,
         allocatedHours,
+        creator,
         teamMembers: [
             {
                 // Add the user from the token as the leader

@@ -16,3 +16,6 @@ npm-debug.log
 # Ignore any generated files or directories
 .DS_Store
 Thumbs.db
+
+
+src/scripts/seedTemplates.js

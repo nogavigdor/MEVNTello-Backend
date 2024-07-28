@@ -15,6 +15,7 @@ const projectSchema = new Schema<ProjectDocument>(
       minlength: 6,
       maxlength: 255,
     },
+  
     startDate: {
       type: Date,
       required: true,
@@ -27,6 +28,11 @@ const projectSchema = new Schema<ProjectDocument>(
       type: Number,
       required: true,
       min: 0,
+    },
+    creator: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
     teamMembers: [
             {

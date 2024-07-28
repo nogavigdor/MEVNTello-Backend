@@ -27,6 +27,11 @@ const projectSchema = new mongoose_1.Schema({
         required: true,
         min: 0,
     },
+    creator: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     teamMembers: [
         {
             _id: {

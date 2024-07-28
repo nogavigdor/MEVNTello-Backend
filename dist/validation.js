@@ -18,6 +18,7 @@ const projectValidation = (data) => {
         startDate: joi_1.default.date().required(),
         endDate: joi_1.default.date().required(),
         allocatedHours: joi_1.default.number().required().min(0),
+        creator: joi_1.default.string().required(),
         teamMembers: joi_1.default.array().items(joi_1.default.object({
             _id: joi_1.default.string().required(),
             role: joi_1.default.string().valid('leader', 'member').required()

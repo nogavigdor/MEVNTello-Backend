@@ -1,6 +1,7 @@
 // src/scripts/seedTemplates.ts
 import mongoose from 'mongoose';
 import TaskTemplate from '../models/taskTemplate';
+import { env } from 'process';
 
 // Sample task templates to seed the database
 const templates = [
@@ -81,7 +82,7 @@ const templates = [
 ];
 
 async function seedTemplates() {
-  await mongoose.connect('mongodb+srv://nogavigdor:Easv365@cluster0.4lslicv.mongodb.net/mevntello_db_dev?retryWrites=true&w=majority');
+  await mongoose.connect(env.MONGODB_URI as string);
   await TaskTemplate.insertMany(templates);
   console.log('Templates seeded successfully');
   mongoose.disconnect();

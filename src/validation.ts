@@ -21,6 +21,7 @@ const projectValidation = (data: ProjectDocument) => {
         startDate: Joi.date().required(),
         endDate: Joi.date().required(),
         allocatedHours: Joi.number().required().min(0),
+        creator: Joi.string().required(),
         teamMembers: Joi.array().items(
             Joi.object({
                 _id: Joi.string().required(),

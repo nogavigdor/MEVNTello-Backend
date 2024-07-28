@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // src/scripts/seedTemplates.ts
 const mongoose_1 = __importDefault(require("mongoose"));
 const taskTemplate_1 = __importDefault(require("../models/taskTemplate"));
+const process_1 = require("process");
 // Sample task templates to seed the database
 const templates = [
     {
@@ -84,7 +85,7 @@ const templates = [
     },
 ];
 async function seedTemplates() {
-    await mongoose_1.default.connect('mongodb+srv://nogavigdor:Easv365@cluster0.4lslicv.mongodb.net/mevntello_db_dev?retryWrites=true&w=majority');
+    await mongoose_1.default.connect(process_1.env.MONGODB_URI);
     await taskTemplate_1.default.insertMany(templates);
     console.log('Templates seeded successfully');
     mongoose_1.default.disconnect();
