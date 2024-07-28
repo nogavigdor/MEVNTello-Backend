@@ -8,11 +8,6 @@ import { CustomRequest } from '../interfaces/ICustomRequest';
 const router = express.Router();
 
 
-// Middleware to log each request
-router.use((req, res, next) => {
-    console.log(`Received request: ${req.method} ${req.originalUrl}`);
-    next();
-});
 
 // Get all projects
 router.get('/', verifyToken as RequestHandler, async (req, res) => {
