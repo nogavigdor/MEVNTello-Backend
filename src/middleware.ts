@@ -33,9 +33,9 @@ const isAdmin: RequestHandler = async (req, res, next) => {
         return res.status(404).json({ message: "User not found" });
     }
 
-    if (user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access Denied: You are not an admin' });
-    }
+    if (user.role === 'admin') {
+        return next(); // If the user is admin, skip the next middleware
+      }
 
     next();
 };
