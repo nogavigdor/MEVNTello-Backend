@@ -89,7 +89,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
             // Add team members from the request body
             ...teamMembers // Include team members from the request body
         ],
-        lists
+        lists : []
     });
 
     try {

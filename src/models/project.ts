@@ -48,6 +48,7 @@ const projectSchema = new Schema<ProjectDocument>(
                 },
             },
         ],
+        lists: [{ type: Schema.Types.ObjectId, ref: 'List' }], 
   },
   {
     timestamps: true,
