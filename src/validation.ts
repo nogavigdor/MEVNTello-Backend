@@ -28,6 +28,7 @@ const projectValidation = (data: ProjectDocument) => {
                 role: Joi.string().valid('leader', 'member').required()
             })
         ).min(1),
+        lists : Joi.array().items(Joi.string()).optional(),
         createdAt: Joi.date().optional(),
         updatedAt: Joi.date().optional()
     });
