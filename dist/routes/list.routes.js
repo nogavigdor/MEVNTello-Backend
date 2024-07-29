@@ -95,10 +95,13 @@ router.post('/', middleware_1.verifyToken, async (req, res) => {
     // Automatically assign the project ID
     const list = new list_1.default({
         ...customReq.body,
-        projectId: projectId,
     });
     try {
         const savedList = await list.save();
+        // Update the project document with the new list ID
+        project.lists?.push(savedList._id);
+        // Save the updated project
+        await project.save();
         res.status(201).json(savedList);
     }
     catch (err) {

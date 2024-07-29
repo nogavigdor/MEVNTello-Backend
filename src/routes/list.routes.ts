@@ -108,6 +108,12 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
 
     try {
         const savedList = await list.save();
+
+        // Update the project document with the new list ID
+        project.lists?.push(savedList._id);
+        
+        // Save the updated project
+        await project.save();
         res.status(201).json(savedList);
     } catch (err: unknown) {
         if (err instanceof Error) {

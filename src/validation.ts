@@ -41,9 +41,7 @@ const listValidation = (data: ListDocument) => {
         _id: Joi.string().optional(), 
         name: Joi.string().required().max(255),
         projectId: Joi.string().required(),
-        tasks: Joi.array().items(
-            Joi.string().required()
-        ).min(1),
+        tasks: Joi.array(),
         createdAt: Joi.date().optional(),
         updatedAt: Joi.date().optional()
     });

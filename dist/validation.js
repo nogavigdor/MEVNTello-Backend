@@ -31,7 +31,7 @@ const listValidation = (data) => {
         _id: joi_1.default.string().optional(),
         name: joi_1.default.string().required().max(255),
         projectId: joi_1.default.string().required(),
-        tasks: joi_1.default.array().items(joi_1.default.string().required()).min(1),
+        tasks: joi_1.default.array(),
         createdAt: joi_1.default.date().optional(),
         updatedAt: joi_1.default.date().optional()
     });
