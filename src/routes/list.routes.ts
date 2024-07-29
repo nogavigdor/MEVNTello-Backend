@@ -104,7 +104,6 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     // Automatically assign the project ID
     const list = new List({
         ...customReq.body,
-        projectId: projectId,
     });
 
     try {
