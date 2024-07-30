@@ -31,33 +31,27 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
 // Get all tasks for a specific list (id is the list ID) -all project memebers can see the tasks
 router.get('/list/:id', verifyToken as RequestHandler, async (req, res) => {
     try {
-        const tasks = await Task.find({ listId: req.params.id });
-
-        if (!tasks || tasks.length === 0) return res.status(404).json({ message: 'Tasks not found' });
+        const list = await List.findById(req.params.id);
+        if (!list) return res.status(404).json({ message: 'List not found' });
 
         const customReq = req as CustomRequest;
         const userId = customReq.user._id;
         const isAdmin = customReq.user.role === 'admin';
 
-        // If the user is not an admin, check if they are a member or leader of the project
-        if (!isAdmin) {
-            const list = await List.findById(req.params.id);
-            if (!list) return res.status(404).json({ message: 'List not found' });
+        const projectId = list.projectId;
+        const project = await Project.findById(projectId);
 
-            const projectId = list.projectId;
-            const project = await Project.findById(projectId);
-
-            if (!project) {
-                return res.status(404).json({ message: "Project not found" });
-            }
-
-            // Check if the user is a member or leader of the project
-            const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === userId);
-
-            if (!isMemberOrLeader) {
-                return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
-            }
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
         }
+
+        // Check if the user is a member or leader of the project
+        const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === userId);
+        if (!isAdmin && !isMemberOrLeader) {
+            return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+        }
+
+        const tasks = await Task.find({ listId: req.params.id });
 
         // If no tasks are found, return an empty array with a 200 status
         if (!tasks || tasks.length === 0) {
