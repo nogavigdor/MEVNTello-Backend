@@ -52,6 +52,10 @@ router.get('/list/:id', middleware_1.verifyToken, async (req, res) => {
                 return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
             }
         }
+        // If no tasks are found, return an empty array with a 200 status
+        if (!tasks || tasks.length === 0) {
+            return res.status(200).json([]);
+        }
         res.json(tasks);
     }
     catch (err) {

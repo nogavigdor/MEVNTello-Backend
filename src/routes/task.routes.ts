@@ -59,6 +59,11 @@ router.get('/list/:id', verifyToken as RequestHandler, async (req, res) => {
             }
         }
 
+        // If no tasks are found, return an empty array with a 200 status
+        if (!tasks || tasks.length === 0) {
+            return res.status(200).json([]);
+        }
+
         res.json(tasks);
     } catch (err: unknown) {
         if (err instanceof Error) {
