@@ -8,7 +8,7 @@ import ISubTask from './ISubTask';
         listId: Types.ObjectId;
         name: string;
         description: string;
-        assignedMembers: TeamMember[]; // Array of User IDs
+        assignedMembers: TeamMember[]; 
         hoursAllocated: number;
         hoursUsed: number;
         status: 'todo' | 'inProgress' | 'done';
