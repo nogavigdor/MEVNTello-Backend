@@ -8,6 +8,11 @@ const subTaskSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     completed: { type: Boolean, required: true, default: false },
 });
+const teamMemberSchema = new mongoose_1.Schema({
+    _id: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    username: { type: String, required: true },
+    role: { type: String, enum: ["leader", "member"], required: true },
+});
 exports.taskSchema = new mongoose_1.Schema({
     listId: {
         type: mongoose_1.Schema.Types.ObjectId,
@@ -26,12 +31,7 @@ exports.taskSchema = new mongoose_1.Schema({
         minlength: 6,
         maxlength: 255,
     },
-    assignedMembers: [
-        {
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: "User",
-        },
-    ],
+    assignedMembers: [teamMemberSchema],
     hoursAllocated: {
         type: Number,
         required: true,

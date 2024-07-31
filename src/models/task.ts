@@ -9,6 +9,13 @@ const subTaskSchema = new Schema<ISubTask>({
     completed: { type: Boolean, required: true, default: false },
 });
 
+
+const teamMemberSchema = new Schema({
+    _id: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    username: { type: String, required: true },
+    role: { type: String, enum: ["leader", "member"], required: true },
+  });
+
 export const taskSchema = new Schema<TaskDocument>(
     {
         listId: {
@@ -28,12 +35,7 @@ export const taskSchema = new Schema<TaskDocument>(
         minlength: 6,
         maxlength: 255,
         },
-        assignedMembers: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-        },
-        ],
+        assignedMembers: [teamMemberSchema],
         hoursAllocated: {
         type: Number,
         required: true,
