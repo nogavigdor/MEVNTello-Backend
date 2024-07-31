@@ -50,7 +50,7 @@ const listValidation = (data: ListDocument) => {
 };
 
 // Task Validation Schema
-const taskValidation = (data: TaskDocument) => {
+const taskValidation = (data: Partial<TaskDocument>) => {
     const schema = Joi.object({
         _id: Joi.string().optional(), 
         listId: Joi.string().required(),
