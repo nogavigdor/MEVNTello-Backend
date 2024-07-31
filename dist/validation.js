@@ -43,7 +43,7 @@ const projectUpdateValidation = (data) => {
         lists: joi_1.default.array().items(joi_1.default.string()).optional(),
         createdAt: joi_1.default.date().optional(),
         updatedAt: joi_1.default.date().optional()
-    }).or('_id', 'name', 'description', 'startDate', 'endDate', 'allocatedHours', 'creator', 'teamMembers', 'lists', 'createdAt', 'updatedAt');
+    }).min(1);
     return schema.validate(data);
 };
 exports.projectUpdateValidation = projectUpdateValidation;
@@ -69,7 +69,7 @@ const listUpdateValidation = (data) => {
         tasks: joi_1.default.array().optional(),
         createdAt: joi_1.default.date().optional(),
         updatedAt: joi_1.default.date().optional()
-    }).or('_id', 'name', 'projectId', 'tasks', 'createdAt', 'updatedAt');
+    }).min(1);
     return schema.validate(data);
 };
 exports.listUpdateValidation = listUpdateValidation;
@@ -119,7 +119,7 @@ const taskUpdateValidation = (data) => {
         })).optional(),
         createdAt: joi_1.default.date().optional(),
         updatedAt: joi_1.default.date().optional()
-    }).or('_id', 'listId', 'name', 'description', 'assignedMembers', 'hoursAllocated', 'hoursUsed', 'status', 'subTasks', 'createdAt', 'updatedAt');
+    }).min(1);
     return schema.validate(data);
 };
 exports.taskUpdateValidation = taskUpdateValidation;

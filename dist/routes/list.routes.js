@@ -8,6 +8,7 @@ const middleware_1 = require("../middleware");
 const list_1 = __importDefault(require("../models/list"));
 const project_1 = __importDefault(require("../models/project"));
 const validation_1 = require("../validation");
+const validation_2 = require("../validation");
 const router = express_1.default.Router();
 // Get all lists for a project (id is the project ID)
 router.get('/project/:id', middleware_1.verifyToken, async (req, res) => {
@@ -116,7 +117,7 @@ router.post('/', middleware_1.verifyToken, async (req, res) => {
 /// Update a list (id is the list ID) - admin or project leader only
 router.put('/:id', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
-    const { error } = (0, validation_1.listValidation)(customReq.body);
+    const { error } = (0, validation_2.listUpdateValidation)(customReq.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
     try {

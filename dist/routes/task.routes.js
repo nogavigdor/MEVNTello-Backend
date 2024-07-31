@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = require("mongoose");
 const middleware_1 = require("../middleware");
 const validation_1 = require("../validation");
+const validation_2 = require("../validation");
 const task_1 = __importDefault(require("../models/task"));
 const list_1 = __importDefault(require("../models/list"));
 const project_1 = __importDefault(require("../models/project"));
@@ -100,7 +101,7 @@ router.post('/:listId', middleware_1.verifyToken, middleware_1.isAdmin, async (r
 /// Update a task - id is the task ID, only task members can update hoursUsed, other updates are allowed only for the project leader or admin
 router.put('/:id', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
-    const { error } = (0, validation_1.taskValidation)(req.body);
+    const { error } = (0, validation_2.taskUpdateValidation)(req.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
     try {

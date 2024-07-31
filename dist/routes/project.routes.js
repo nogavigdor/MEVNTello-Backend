@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const middleware_1 = require("../middleware");
 const validation_1 = require("../validation");
+const validation_2 = require("../validation");
 const project_1 = __importDefault(require("../models/project"));
 const router = express_1.default.Router();
 // Get all projects
@@ -105,7 +106,7 @@ router.post('/', middleware_1.verifyToken, async (req, res) => {
 });
 // Update a project (id is the project ID)
 router.put('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, res) => {
-    const { error } = (0, validation_1.projectValidation)(req.body);
+    const { error } = (0, validation_2.projectUpdateValidation)(req.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
     try {

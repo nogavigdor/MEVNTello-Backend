@@ -56,9 +56,7 @@ const projectUpdateValidation = (data: Partial<ProjectDocument>) => {
         lists : Joi.array().items(Joi.string()).optional(),
         createdAt: Joi.date().optional(),
         updatedAt: Joi.date().optional()
-    }).or(
-        '_id', 'name', 'description', 'startDate', 'endDate', 'allocatedHours', 'creator', 'teamMembers', 'lists', 'createdAt', 'updatedAt'
-    );
+    }).min(1);
 
     return schema.validate(data);
 };
@@ -85,9 +83,7 @@ const listUpdateValidation = (data: Partial<ListDocument>) => {
         tasks: Joi.array().optional(),
         createdAt: Joi.date().optional(),
         updatedAt: Joi.date().optional()
-    }).or(
-        '_id', 'name', 'projectId', 'tasks', 'createdAt', 'updatedAt'
-    );
+    }).min(1);
 
     return schema.validate(data);
 }
@@ -146,10 +142,7 @@ const taskUpdateValidation = (data: Partial<TaskDocument>) => {
         ).optional(),
         createdAt: Joi.date().optional(),
         updatedAt: Joi.date().optional()
-    }).or(
-        '_id', 'listId', 'name', 'description', 'assignedMembers', 'hoursAllocated', 'hoursUsed', 'status', 'subTasks', 'createdAt', 'updatedAt'
-    );
-
+    }).min(1);
     return schema.validate(data);
 };
 
