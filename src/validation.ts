@@ -8,6 +8,7 @@ import User from './models/user'; // Import the User model
 import { ProjectDocument } from './interfaces/IProject';
 import { ListDocument } from './interfaces/IList';
 import { TaskDocument } from './interfaces/ITask';
+import SubTaskDocument from './interfaces/ISubTask';
 import { UserDocument } from './interfaces/IUser';
 import { UserPayload } from './interfaces/IUserPayload';
 import { CustomRequest } from './interfaces/ICustomRequest';
@@ -36,6 +37,32 @@ const projectValidation = (data: ProjectDocument) => {
     return schema.validate(data);
 };
 
+// Project Update Validation Schema
+const projectUpdateValidation = (data: Partial<ProjectDocument>) => {
+    const schema = Joi.object({
+        _id: Joi.string().optional(), 
+        name: Joi.string().optional().max(255),
+        description: Joi.string().allow('').max(1000),
+        startDate: Joi.date().optional(),
+        endDate: Joi.date().optional(),
+        allocatedHours: Joi.number().optional().min(0),
+        creator: Joi.string().optional(),
+        teamMembers: Joi.array().items(
+            Joi.object({
+                _id: Joi.string().required(),
+                role: Joi.string().valid('leader', 'member').required()
+            })
+        ).min(1).optional(),
+        lists : Joi.array().items(Joi.string()).optional(),
+        createdAt: Joi.date().optional(),
+        updatedAt: Joi.date().optional()
+    }).or(
+        '_id', 'name', 'description', 'startDate', 'endDate', 'allocatedHours', 'creator', 'teamMembers', 'lists', 'createdAt', 'updatedAt'
+    );
+
+    return schema.validate(data);
+};
+
 // List Validation Schema
 const listValidation = (data: ListDocument) => {
     const schema = Joi.object({
@@ -49,8 +76,24 @@ const listValidation = (data: ListDocument) => {
     return schema.validate(data);
 };
 
+// List Update Validation Schema
+const listUpdateValidation = (data: Partial<ListDocument>) => {
+    const schema = Joi.object({
+        _id: Joi.string().optional(), 
+        name: Joi.string().optional().max(255),
+        projectId: Joi.string().optional(),
+        tasks: Joi.array().optional(),
+        createdAt: Joi.date().optional(),
+        updatedAt: Joi.date().optional()
+    }).or(
+        '_id', 'name', 'projectId', 'tasks', 'createdAt', 'updatedAt'
+    );
+
+    return schema.validate(data);
+}
+
 // Task Validation Schema
-const taskValidation = (data: Partial<TaskDocument>) => {
+const taskValidation = (data: TaskDocument) => {
     const schema = Joi.object({
         _id: Joi.string().optional(), 
         listId: Joi.string().required(),
@@ -78,6 +121,56 @@ const taskValidation = (data: Partial<TaskDocument>) => {
     return schema.validate(data);
 };
 
+// Task Update Validation Schema
+const taskUpdateValidation = (data: Partial<TaskDocument>) => {
+    const schema = Joi.object({
+        _id: Joi.string().optional(), 
+        listId: Joi.string().optional(),
+        name: Joi.string().optional().max(255),
+        description: Joi.string().optional().max(255),
+        assignedMembers: Joi.array().items(
+            Joi.object({
+              _id: Joi.string().required(),
+              username: Joi.string().required(),
+              role: Joi.string().valid('leader', 'member').required(),
+            })
+        ).optional(),
+        hoursAllocated: Joi.number().optional().min(0),
+        hoursUsed: Joi.number().optional().min(0),
+        status: Joi.string().valid('todo', 'inProgress', 'done').optional(),
+        subTasks: Joi.array().items(
+            Joi.object({
+                name: Joi.string().required(),
+                completed: Joi.boolean().required()
+            })
+        ).optional(),
+        createdAt: Joi.date().optional(),
+        updatedAt: Joi.date().optional()
+    }).or(
+        '_id', 'listId', 'name', 'description', 'assignedMembers', 'hoursAllocated', 'hoursUsed', 'status', 'subTasks', 'createdAt', 'updatedAt'
+    );
+
+    return schema.validate(data);
+};
+
+// SubTask Validation Schema
+const subTaskValidation = (data: { data: SubTaskDocument}) => {
+    const schema = Joi.object({
+        name: Joi.string().required(),
+        completed: Joi.boolean().required()
+    });
+    return schema.validate(data);
+}
+
+// SubTask Update Validation Schema
+const SubTaskUpdateValidation = (data: { data: Partial<SubTaskDocument>}) => {
+    const schema = Joi.object({
+        name: Joi.string().optional(),
+        completed: Joi.boolean().optional()
+    });
+    return schema.validate(data);
+}
+
 // Registration Validation Schema
 const registerValidation = (data: UserDocument) => {
     const schema = Joi.object({
@@ -99,4 +192,6 @@ const loginValidation = (data: { email: string; password: string }) => {
 };
 
 
-export { registerValidation, loginValidation, projectValidation, listValidation, taskValidation };
+export { registerValidation, loginValidation, projectValidation,
+     listValidation, taskValidation, taskUpdateValidation,
+     projectUpdateValidation, listUpdateValidation, subTaskValidation, SubTaskUpdateValidation };
