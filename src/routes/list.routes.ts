@@ -3,6 +3,7 @@ import { verifyToken, isProjectMember, isLeader, isMemberOrLeader } from '../mid
 import List from '../models/list';
 import Project from '../models/project';
 import { listValidation } from '../validation';
+import { listUpdateValidation } from '../validation';
 import { CustomRequest } from '../interfaces/ICustomRequest';
 
 const router = express.Router();
@@ -127,7 +128,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
 /// Update a list (id is the list ID) - admin or project leader only
 router.put('/:id', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
-    const { error } = listValidation(customReq.body);
+    const { error } = listUpdateValidation(customReq.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     try {

@@ -2,6 +2,7 @@ import express from 'express';
 import { Types } from 'mongoose';
 import { verifyToken, isLeader, isAdmin, isTaskMember } from '../middleware';
 import { taskValidation } from '../validation';
+import { taskUpdateValidation } from '../validation';
 import Task from '../models/task';
 import List from '../models/list';
 import { RequestHandler } from 'express';
@@ -109,7 +110,7 @@ router.post('/:listId', verifyToken as RequestHandler, isAdmin, async (req, res,
 /// Update a task - id is the task ID, only task members can update hoursUsed, other updates are allowed only for the project leader or admin
 router.put('/:id', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
-    const { error } = taskValidation(req.body);
+    const { error } = taskUpdateValidation(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     try {

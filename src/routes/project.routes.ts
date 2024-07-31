@@ -1,6 +1,7 @@
 import express from 'express';
 import { verifyToken, isLeader, isProjectMember, isMemberOrLeader } from '../middleware';
 import { projectValidation } from '../validation';
+import { projectUpdateValidation } from '../validation';
 import Project from '../models/project';
 import { RequestHandler } from 'express';
 import { CustomRequest } from '../interfaces/ICustomRequest';
@@ -106,7 +107,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
 
 // Update a project (id is the project ID)
 router.put('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => {
-    const { error } = projectValidation(req.body);
+    const { error } = projectUpdateValidation(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     try {
