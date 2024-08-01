@@ -69,7 +69,44 @@ router.get('/list/:id', verifyToken as RequestHandler, async (req, res) => {
     }
 });
 
+//create get tasks for a specific project
+router.get('/project/:id', verifyToken as RequestHandler, async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id);
+        if (!project) return res.status(404).json({ message: 'Project not found' });
 
+        const customReq = req as CustomRequest;
+        const userId = customReq.user._id;
+        const isAdmin = customReq.user.role === 'admin';
+
+        // Check if the user is a member or leader of the project
+        const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === userId);
+        if (!isAdmin && !isMemberOrLeader) {
+            return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });
+        }
+
+        const lists = await List.find({ projectId: req.params.id });
+
+        if (!lists || lists.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const listIds = lists.map(list => list._id);
+        const tasks = await Task.find({ listId: { $in: listIds } });
+
+        if (!tasks || tasks.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        res.json(tasks);
+    } catch (err: unknown) {
+        if (err instanceof Error) {
+            res.status(500).json({ message: err.message });
+        } else {
+            res.status(500).json({ message: 'An unknown error occurred' });
+        }
+    }
+});
 // Create a new task (only by project leaders or admins)
 router.post('/:listId', verifyToken as RequestHandler, isAdmin, async (req, res, next) => {
     const customReq = req as CustomRequest;
