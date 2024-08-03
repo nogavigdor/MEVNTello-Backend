@@ -28,14 +28,14 @@ exports.taskSchema = new mongoose_1.Schema({
     description: {
         type: String,
         required: true,
-        minlength: 6,
+        minlength: 0,
         maxlength: 255,
     },
     assignedMembers: [teamMemberSchema],
     hoursAllocated: {
         type: Number,
         required: true,
-        min: 0,
+        min: 1,
     },
     hoursUsed: {
         type: Number,

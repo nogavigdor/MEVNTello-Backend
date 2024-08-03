@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SubTaskUpdateValidation = exports.subTaskValidation = exports.listUpdateValidation = exports.projectUpdateValidation = exports.taskUpdateValidation = exports.taskValidation = exports.listValidation = exports.projectValidation = exports.loginValidation = exports.registerValidation = void 0;
+exports.taskTemplateUpdateValidation = exports.taskTemplateValidation = exports.SubTaskUpdateValidation = exports.subTaskValidation = exports.listUpdateValidation = exports.projectUpdateValidation = exports.taskUpdateValidation = exports.taskValidation = exports.listValidation = exports.projectValidation = exports.loginValidation = exports.registerValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 // Project Validation Schema
 const projectValidation = (data) => {
@@ -161,3 +161,31 @@ const loginValidation = (data) => {
     return schema.validate(data);
 };
 exports.loginValidation = loginValidation;
+// Task Template Validation Schema
+const taskTemplateValidation = (data) => {
+    const schema = joi_1.default.object({
+        name: joi_1.default.string().required().min(6).max(255),
+        lists: joi_1.default.array().items(joi_1.default.object({
+            name: joi_1.default.string().required(),
+            tasks: joi_1.default.array().items(joi_1.default.object({
+                name: joi_1.default.string().required(),
+            })).required(),
+        })).required(),
+    });
+    return schema.validate(data);
+};
+exports.taskTemplateValidation = taskTemplateValidation;
+// Task Template Update Validation Schema
+const taskTemplateUpdateValidation = (data) => {
+    const schema = joi_1.default.object({
+        name: joi_1.default.string().min(6).max(255).optional(),
+        lists: joi_1.default.array().items(joi_1.default.object({
+            name: joi_1.default.string().required(),
+            tasks: joi_1.default.array().items(joi_1.default.object({
+                name: joi_1.default.string().required(),
+            })).required(),
+        })).optional(),
+    }).min(1);
+    return schema.validate(data);
+};
+exports.taskTemplateUpdateValidation = taskTemplateUpdateValidation;

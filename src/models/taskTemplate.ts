@@ -1,9 +1,6 @@
-// src/models/taskTemplate.ts
 import { Schema, model } from 'mongoose';
 import { TaskTemplateDocument } from '../interfaces/ITaskTemplate';
 
-
-// Task Template schema to enable creating auto task templates for projects
 const taskTemplateSchema = new Schema<TaskTemplateDocument>(
   {
     name: {
@@ -23,9 +20,6 @@ const taskTemplateSchema = new Schema<TaskTemplateDocument>(
             name: {
               type: String,
               required: true,
-            },
-            description: {
-              type: String,
             },
           },
         ],

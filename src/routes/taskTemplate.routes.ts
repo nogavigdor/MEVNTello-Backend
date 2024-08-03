@@ -1,18 +1,16 @@
-// src/routes/taskTemplate.routes.ts
 import express, { RequestHandler } from 'express';
 import { verifyToken, isAdmin } from '../middleware';
-
-
 import TaskTemplate from '../models/taskTemplate';
+import { taskTemplateValidation, taskTemplateUpdateValidation } from '../validation';
 
 const router = express.Router();
 
 // Create a new task template (Admin only)
 router.post('/', verifyToken as RequestHandler, isAdmin as RequestHandler, async (req, res) => {
+  const { error } = taskTemplateValidation(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+
   const { name, lists } = req.body;
-
-  
-
   const taskTemplate = new TaskTemplate({ name, lists });
 
   try {
@@ -46,6 +44,9 @@ router.get('/:id', verifyToken as RequestHandler, async (req, res) => {
 
 // Update a task template (Admin only)
 router.put('/:id', verifyToken as RequestHandler, isAdmin as RequestHandler, async (req, res) => {
+  const { error } = taskTemplateUpdateValidation(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+
   const { name, lists } = req.body;
 
   try {

@@ -3,13 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// src/routes/taskTemplate.routes.ts
 const express_1 = __importDefault(require("express"));
 const middleware_1 = require("../middleware");
 const taskTemplate_1 = __importDefault(require("../models/taskTemplate"));
+const validation_1 = require("../validation");
 const router = express_1.default.Router();
 // Create a new task template (Admin only)
 router.post('/', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res) => {
+    const { error } = (0, validation_1.taskTemplateValidation)(req.body);
+    if (error)
+        return res.status(400).json({ message: error.details[0].message });
     const { name, lists } = req.body;
     const taskTemplate = new taskTemplate_1.default({ name, lists });
     try {
@@ -44,6 +47,9 @@ router.get('/:id', middleware_1.verifyToken, async (req, res) => {
 });
 // Update a task template (Admin only)
 router.put('/:id', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res) => {
+    const { error } = (0, validation_1.taskTemplateUpdateValidation)(req.body);
+    if (error)
+        return res.status(400).json({ message: error.details[0].message });
     const { name, lists } = req.body;
     try {
         const updatedTemplate = await taskTemplate_1.default.findByIdAndUpdate(req.params.id, { name, lists }, { new: true });

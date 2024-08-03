@@ -1,25 +1,25 @@
-// src/scripts/seedTemplates.ts
 import mongoose from 'mongoose';
 import TaskTemplate from '../models/taskTemplate';
-import { env } from 'process';
+import * as dotenv from 'dotenv';
 
-// Sample task templates to seed the database
+dotenv.config();
+
 const templates = [
   {
     name: 'Software Development',
     lists: [
       {
-        name: 'Backlog',
+        name: 'To Do',
         tasks: [
-          { name: 'Setup Development Environment', description: 'Install necessary tools and frameworks.' },
-          { name: 'Requirement Analysis', description: 'Gather and analyze project requirements.' },
+          { name: 'Setup Development Environment' },
+          { name: 'Requirement Analysis' },
         ],
       },
       {
         name: 'In Progress',
         tasks: [
-          { name: 'Develop Feature A', description: 'Implement and test feature A.' },
-          { name: 'Develop Feature B', description: 'Implement and test feature B.' },
+          { name: 'Develop Feature A' },
+          { name: 'Develop Feature B' },
         ],
       },
       {
@@ -34,21 +34,21 @@ const templates = [
       {
         name: 'Planning',
         tasks: [
-          { name: 'Market Research', description: 'Conduct research on the target market.' },
-          { name: 'Budget Allocation', description: 'Allocate budget for various marketing activities.' },
+          { name: 'Market Research' },
+          { name: 'Budget Allocation' },
         ],
       },
       {
         name: 'Execution',
         tasks: [
-          { name: 'Launch Social Media Campaign', description: 'Create and publish social media posts.' },
-          { name: 'Email Marketing', description: 'Send marketing emails to potential customers.' },
+          { name: 'Launch Social Media Campaign' },
+          { name: 'Email Marketing' },
         ],
       },
       {
         name: 'Review',
         tasks: [
-          { name: 'Analyze Campaign Performance', description: 'Review the performance metrics of the campaign.' },
+          { name: 'Analyze Campaign Performance' },
         ],
       },
     ],
@@ -59,22 +59,22 @@ const templates = [
       {
         name: 'Preparation',
         tasks: [
-          { name: 'Venue Selection', description: 'Select a venue for the event.' },
-          { name: 'Invite Guests', description: 'Send out invitations to guests.' },
+          { name: 'Venue Selection' },
+          { name: 'Invite Guests' },
         ],
       },
       {
         name: 'Execution',
         tasks: [
-          { name: 'Event Setup', description: 'Set up the venue for the event.' },
-          { name: 'Manage Event', description: 'Ensure everything runs smoothly during the event.' },
+          { name: 'Event Setup' },
+          { name: 'Manage Event' },
         ],
       },
       {
         name: 'Follow-up',
         tasks: [
-          { name: 'Send Thank You Notes', description: 'Send thank you notes to attendees.' },
-          { name: 'Collect Feedback', description: 'Collect feedback from attendees.' },
+          { name: 'Send Thank You Notes' },
+          { name: 'Collect Feedback' },
         ],
       },
     ],
@@ -82,10 +82,25 @@ const templates = [
 ];
 
 async function seedTemplates() {
-  await mongoose.connect(env.MONGODB_URI as string);
-  await TaskTemplate.insertMany(templates);
-  console.log('Templates seeded successfully');
-  mongoose.disconnect();
+  try {
+    await mongoose.connect(process.env.DBHOST as string, {
+      //useNewUrlParser: true,
+     // useUnifiedTopology: true,
+    });
+
+    console.log('Connected to MongoDB');
+
+    // Clear the collection first
+    await TaskTemplate.deleteMany({});
+    console.log('Cleared existing templates');
+
+    const result = await TaskTemplate.insertMany(templates);
+    console.log('Templates seeded successfully:', result);
+  } catch (err) {
+    console.error('Error seeding templates:', err);
+  } finally {
+    mongoose.disconnect();
+  }
 }
 
 seedTemplates();

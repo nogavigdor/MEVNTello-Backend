@@ -12,6 +12,7 @@ import SubTaskDocument from './interfaces/ISubTask';
 import { UserDocument } from './interfaces/IUser';
 import { UserPayload } from './interfaces/IUserPayload';
 import { CustomRequest } from './interfaces/ICustomRequest';
+import { TaskTemplateDocument } from './interfaces/ITaskTemplate';
 
 // Project Validation Schema
 const projectValidation = (data: ProjectDocument) => {
@@ -184,7 +185,44 @@ const loginValidation = (data: { email: string; password: string }) => {
     return schema.validate(data);
 };
 
+// Task Template Validation Schema
+const taskTemplateValidation = (data: TaskTemplateDocument) => {
+    const schema = Joi.object({
+        name: Joi.string().required().min(6).max(255),
+        lists: Joi.array().items(
+            Joi.object({
+                name: Joi.string().required(),
+                tasks: Joi.array().items(
+                    Joi.object({
+                        name: Joi.string().required(),
+                    })
+                ).required(),
+            })
+        ).required(),
+    });
+    return schema.validate(data);
+};
+
+// Task Template Update Validation Schema
+const taskTemplateUpdateValidation = (data: Partial<TaskTemplateDocument>) => {
+    const schema = Joi.object({
+        name: Joi.string().min(6).max(255).optional(),
+        lists: Joi.array().items(
+            Joi.object({
+                name: Joi.string().required(),
+                tasks: Joi.array().items(
+                    Joi.object({
+                        name: Joi.string().required(),
+                    })
+                ).required(),
+            })
+        ).optional(),
+    }).min(1);
+    return schema.validate(data);
+};
+  
 
 export { registerValidation, loginValidation, projectValidation,
      listValidation, taskValidation, taskUpdateValidation,
-     projectUpdateValidation, listUpdateValidation, subTaskValidation, SubTaskUpdateValidation };
+     projectUpdateValidation, listUpdateValidation, subTaskValidation, SubTaskUpdateValidation, 
+     taskTemplateValidation, taskTemplateUpdateValidation };
