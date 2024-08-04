@@ -76,6 +76,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     // Create a new project
     const project = new Project({
         name,
+        creationStatus : 'tasks',
         description,
         startDate,
         endDate,

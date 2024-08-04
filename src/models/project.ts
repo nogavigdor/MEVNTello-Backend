@@ -3,6 +3,11 @@ import { ProjectDocument } from "../interfaces/IProject";
 
 const projectSchema = new Schema<ProjectDocument>(
   {
+    creationStatus: {
+      type: String,
+      enum: ['tasks', 'management', 'complete'],
+      required: true,
+    },
     name: {
       type: String,
       required: true,

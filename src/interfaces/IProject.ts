@@ -5,6 +5,7 @@ import { TeamMember } from './ITeamMember';
 // Project interface
 export interface IProject {
   _id: Types.ObjectId;
+  creationStatus: 'tasks' | 'management' | 'complete';
   projectId: Types.ObjectId;
   name: string;
   description: string;
