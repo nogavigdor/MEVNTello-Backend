@@ -2,6 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const projectSchema = new mongoose_1.Schema({
+    creationStatus: {
+        type: String,
+        enum: ['tasks', 'management', 'complete'],
+        required: true,
+    },
     name: {
         type: String,
         required: true,

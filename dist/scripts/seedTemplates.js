@@ -1,12 +1,35 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const taskTemplate_1 = __importDefault(require("../models/taskTemplate"));
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
+const dotenv = __importStar(require("dotenv"));
+dotenv.config();
 const templates = [
     {
         name: 'Software Development',
@@ -84,15 +107,17 @@ const templates = [
     },
 ];
 async function seedTemplates() {
-    const mongoUri = process.env.MONGODB_URI;
-    if (!mongoUri) {
-        console.error('MONGODB_URI is not defined in the environment variables');
-        process.exit(1); // Exit the process with an error
-    }
     try {
-        await mongoose_1.default.connect(mongoUri);
-        await taskTemplate_1.default.insertMany(templates);
-        console.log('Templates seeded successfully');
+        await mongoose_1.default.connect(process.env.DBHOST, {
+        //useNewUrlParser: true,
+        // useUnifiedTopology: true,
+        });
+        console.log('Connected to MongoDB');
+        // Clear the collection first
+        await taskTemplate_1.default.deleteMany({});
+        console.log('Cleared existing templates');
+        const result = await taskTemplate_1.default.insertMany(templates);
+        console.log('Templates seeded successfully:', result);
     }
     catch (err) {
         console.error('Error seeding templates:', err);

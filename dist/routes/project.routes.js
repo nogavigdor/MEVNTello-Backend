@@ -75,6 +75,7 @@ router.post('/', middleware_1.verifyToken, async (req, res) => {
     // Create a new project
     const project = new project_1.default({
         name,
+        creationStatus: 'tasks',
         description,
         startDate,
         endDate,
