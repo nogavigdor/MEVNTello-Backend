@@ -93,7 +93,7 @@ mongoose
 
 // Use routes
 app.use("/api/projects", projectRoutes);
-app.use('/api/task/templates', taskTemplateRoutes);
+app.use('/api/tasks/templates', taskTemplateRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/lists", listRoutes); 
 app.use("/api/users", authRoutes);

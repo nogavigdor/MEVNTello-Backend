@@ -83,7 +83,7 @@ mongoose_1.default
     .catch(error => console.log("Error connecting to MongoDB: " + error));
 // Use routes
 app.use("/api/projects", project_routes_1.default);
-app.use('/api/task/templates', taskTemplate_routes_1.default);
+app.use('/api/tasks/templates', taskTemplate_routes_1.default);
 app.use("/api/tasks", task_routes_1.default);
 app.use("/api/lists", list_routes_1.default);
 app.use("/api/users", user_routes_1.default);
