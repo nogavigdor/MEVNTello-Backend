@@ -6,7 +6,7 @@ import { TeamMember } from './ITeamMember';
 export interface IProject {
   _id: Types.ObjectId;
   creationStatus: 'tasks' | 'management' | 'complete';
-  projectId: Types.ObjectId;
+  selectedTemplate?: Types.ObjectId; // Optional ID of the selected template
   name: string;
   description: string;
   startDate: Date;

@@ -8,6 +8,10 @@ const projectSchema = new Schema<ProjectDocument>(
       enum: ['tasks', 'management', 'complete'],
       required: true,
     },
+    selectedTemplate: {
+      type: Schema.Types.ObjectId,
+      ref: 'TaskTemplate',
+    },
     name: {
       type: String,
       required: true,

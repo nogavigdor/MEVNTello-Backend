@@ -7,6 +7,10 @@ const projectSchema = new mongoose_1.Schema({
         enum: ['tasks', 'management', 'complete'],
         required: true,
     },
+    selectedTemplate: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'TaskTemplate',
+    },
     name: {
         type: String,
         required: true,

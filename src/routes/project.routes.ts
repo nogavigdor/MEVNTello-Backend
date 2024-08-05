@@ -77,6 +77,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     const project = new Project({
         name,
         creationStatus : 'tasks',
+        selectedTemplate : null, //in case a blank template is selected by default
         description,
         startDate,
         endDate,
