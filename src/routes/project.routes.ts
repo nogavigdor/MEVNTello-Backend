@@ -71,13 +71,13 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     // Destructure the request body
-    const { name, description, startDate, endDate, allocatedHours, teamMembers, creator, lists } = req.body;
+    const { name, creationStatus, selectedTemplate, description, startDate, endDate, allocatedHours, teamMembers, creator, lists } = req.body;
     
     // Create a new project
     const project = new Project({
         name,
-        creationStatus : 'tasks',
-        selectedTemplate : null, //in case a blank template is selected by default
+        creationStatus : creationStatus ? creationStatus : 'tasks', //in case a blank status is selected by default
+        selectedTemplate : selectedTemplate ? selectedTemplate : null, //in case a blank template is selected by default
         description,
         startDate,
         endDate,
