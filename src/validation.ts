@@ -97,17 +97,17 @@ const taskValidation = (data: TaskDocument) => {
         _id: Joi.string().optional(), 
         listId: Joi.string().required(),
         name: Joi.string().required().max(255),
-        description: Joi.string().required().max(255),
+        description: Joi.string().optional().max(255),
         assignedMembers: Joi.array().items(
             Joi.object({
               _id: Joi.string().required(),
               username: Joi.string().required(),
               role: Joi.string().valid('leader', 'member').required(),
             })
-          ).min(1),
-        hoursAllocated: Joi.number().required().min(0),
-        hoursUsed: Joi.number().required().min(0),
-        status: Joi.string().valid('todo', 'inProgress', 'done').required(),
+          ).min(0),
+        hoursAllocated: Joi.number().default(0).min(0),
+        hoursUsed: Joi.number().default(0).min(0),
+        status: Joi.string().valid('todo', 'inProgress', 'done').default("todo"),
         subTasks: Joi.array().items(
             Joi.object({
                 name: Joi.string().required(),

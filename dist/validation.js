@@ -81,15 +81,15 @@ const taskValidation = (data) => {
         _id: joi_1.default.string().optional(),
         listId: joi_1.default.string().required(),
         name: joi_1.default.string().required().max(255),
-        description: joi_1.default.string().required().max(255),
+        description: joi_1.default.string().optional().max(255),
         assignedMembers: joi_1.default.array().items(joi_1.default.object({
             _id: joi_1.default.string().required(),
             username: joi_1.default.string().required(),
             role: joi_1.default.string().valid('leader', 'member').required(),
-        })).min(1),
-        hoursAllocated: joi_1.default.number().required().min(0),
-        hoursUsed: joi_1.default.number().required().min(0),
-        status: joi_1.default.string().valid('todo', 'inProgress', 'done').required(),
+        })).min(0),
+        hoursAllocated: joi_1.default.number().default(0).min(0),
+        hoursUsed: joi_1.default.number().default(0).min(0),
+        status: joi_1.default.string().valid('todo', 'inProgress', 'done').default("todo"),
         subTasks: joi_1.default.array().items(joi_1.default.object({
             name: joi_1.default.string().required(),
             completed: joi_1.default.boolean().required()
