@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import { TaskDocument } from "../interfaces/ITask";
 import { Types } from "mongoose";
 import ISubTask from "../interfaces/ISubTask";
+import { AssignedMember } from "../interfaces/IAssignedMember";
 
 const subTaskSchema = new Schema<ISubTask>({
     _id: { type: Schema.Types.ObjectId, default: () => new Types.ObjectId() },
@@ -10,11 +11,11 @@ const subTaskSchema = new Schema<ISubTask>({
 });
 
 
-const teamMemberSchema = new Schema({
-    _id: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    username: { type: String, required: true },
-    role: { type: String, enum: ["leader", "member"], required: true },
-  });
+const assignedMemberSchema = new Schema<AssignedMember>({
+    _id: { type: Schema.Types.ObjectId, required: true },
+    allocatedHours: { type: Number, required: true, min: 0 },
+    hoursUsed: { type: Number, required: true, min: 0 },
+});
 
 export const taskSchema = new Schema<TaskDocument>(
     {
@@ -35,7 +36,7 @@ export const taskSchema = new Schema<TaskDocument>(
         minlength: 0,
         maxlength: 255,
         },
-        assignedMembers: [teamMemberSchema],
+        assignedMembers: [assignedMemberSchema],
         hoursAllocated: {
         type: Number,
         required: true,

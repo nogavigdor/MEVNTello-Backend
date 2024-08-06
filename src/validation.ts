@@ -103,7 +103,9 @@ const taskValidation = (data: TaskDocument) => {
               _id: Joi.string().required(),
               username: Joi.string().required(),
               role: Joi.string().valid('leader', 'member').required(),
-            })
+              allocatedHours: Joi.number().required().min(0),
+              hoursUsed: Joi.number().required().min(0),
+            }),
           ).min(0),
         hoursAllocated: Joi.number().default(0).min(0),
         hoursUsed: Joi.number().default(0).min(0),
