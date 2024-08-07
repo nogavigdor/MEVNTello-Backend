@@ -68,7 +68,7 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
     console.log('User from token:', customReq.user); // Log the user from the token
    
     const { error } = projectValidation(req.body);
-    if (error) return res.status(400).json({ message: error.details[0].message });
+    if (error) return res.status(400).json({ message: error.details[0].message, details: "validation failed" });
 
     // Destructure the request body
     const { name, creationStatus, selectedTemplate, description, startDate, endDate, allocatedHours, teamMembers, creator, lists } = req.body;
