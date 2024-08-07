@@ -69,7 +69,7 @@ router.post('/', middleware_1.verifyToken, async (req, res) => {
     console.log('User from token:', customReq.user); // Log the user from the token
     const { error } = (0, validation_1.projectValidation)(req.body);
     if (error)
-        return res.status(400).json({ message: error.details[0].message });
+        return res.status(400).json({ message: error.details[0].message, details: "validation failed" });
     // Destructure the request body
     const { name, creationStatus, selectedTemplate, description, startDate, endDate, allocatedHours, teamMembers, creator, lists } = req.body;
     // Create a new project

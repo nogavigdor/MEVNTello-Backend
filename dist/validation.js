@@ -10,7 +10,7 @@ const projectValidation = (data) => {
     const schema = joi_1.default.object({
         _id: joi_1.default.string().optional(),
         creationStatus: joi_1.default.string().valid('tasks', 'management', 'complete').optional(),
-        selectedTemplate: joi_1.default.string().optional(),
+        selectedTemplate: joi_1.default.string().allow('').optional(),
         name: joi_1.default.string().required().max(255),
         description: joi_1.default.string().allow('').max(1000),
         startDate: joi_1.default.date().required(),
@@ -86,6 +86,8 @@ const taskValidation = (data) => {
             _id: joi_1.default.string().required(),
             username: joi_1.default.string().required(),
             role: joi_1.default.string().valid('leader', 'member').required(),
+            allocatedHours: joi_1.default.number().optional().min(0),
+            usedHours: joi_1.default.number().required().min(0),
         })).min(0),
         hoursAllocated: joi_1.default.number().default(0).min(0),
         hoursUsed: joi_1.default.number().default(0).min(0),
