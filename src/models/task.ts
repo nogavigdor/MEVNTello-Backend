@@ -4,6 +4,7 @@ import { Types } from "mongoose";
 import ISubTask from "../interfaces/ISubTask";
 import { AssignedMember } from "../interfaces/IAssignedMember";
 
+
 const subTaskSchema = new Schema<ISubTask>({
     _id: { type: Schema.Types.ObjectId, default: () => new Types.ObjectId() },
     name: { type: String, required: true },
@@ -13,6 +14,8 @@ const subTaskSchema = new Schema<ISubTask>({
 
 const assignedMemberSchema = new Schema<AssignedMember>({
     _id: { type: Schema.Types.ObjectId, required: true },
+    username: { type: String, required: true },
+    role: { type: String, enum: ["leader", "member"], required: true },
     allocatedHours: { type: Number, min: 0 },
     usedHours: { type: Number, required: true, min: 0 },
 });

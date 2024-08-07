@@ -10,6 +10,8 @@ const subTaskSchema = new mongoose_1.Schema({
 });
 const assignedMemberSchema = new mongoose_1.Schema({
     _id: { type: mongoose_1.Schema.Types.ObjectId, required: true },
+    username: { type: String, required: true },
+    role: { type: String, enum: ["leader", "member"], required: true },
     allocatedHours: { type: Number, min: 0 },
     usedHours: { type: Number, required: true, min: 0 },
 });
