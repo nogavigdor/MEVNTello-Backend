@@ -13,8 +13,8 @@ const subTaskSchema = new Schema<ISubTask>({
 
 const assignedMemberSchema = new Schema<AssignedMember>({
     _id: { type: Schema.Types.ObjectId, required: true },
-    allocatedHours: { type: Number, required: true, min: 0 },
-    hoursUsed: { type: Number, required: true, min: 0 },
+    allocatedHours: { type: Number, min: 0 },
+    usedHours: { type: Number, required: true, min: 0 },
 });
 
 export const taskSchema = new Schema<TaskDocument>(
