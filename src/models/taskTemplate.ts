@@ -6,7 +6,7 @@ const taskTemplateSchema = new Schema<TaskTemplateDocument>(
     name: {
       type: String,
       required: true,
-      minlength: 6,
+      minlength: 2,
       maxlength: 255,
     },
     lists: [

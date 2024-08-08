@@ -15,13 +15,13 @@ const projectSchema = new Schema<ProjectDocument>(
     name: {
       type: String,
       required: true,
-      minlength: 6,
+      minlength: 2,
       maxlength: 255,
     },
     description: {
       type: String,
       required: true,
-      minlength: 6,
+      minlength: 2,
       maxlength: 255,
     },
   
