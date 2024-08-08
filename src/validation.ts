@@ -44,6 +44,7 @@ const projectValidation = (data: ProjectDocument) => {
 const projectUpdateValidation = (data: Partial<ProjectDocument>) => {
     const schema = Joi.object({
         _id: Joi.string().optional(), 
+        creationStatus: Joi.string().valid('tasks', 'management', 'complete').optional(),
         name: Joi.string().optional().max(255),
         description: Joi.string().allow('').max(1000),
         startDate: Joi.date().optional(),

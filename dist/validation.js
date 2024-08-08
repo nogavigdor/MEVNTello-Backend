@@ -32,6 +32,7 @@ exports.projectValidation = projectValidation;
 const projectUpdateValidation = (data) => {
     const schema = joi_1.default.object({
         _id: joi_1.default.string().optional(),
+        creationStatus: joi_1.default.string().valid('tasks', 'management', 'complete').optional(),
         name: joi_1.default.string().optional().max(255),
         description: joi_1.default.string().allow('').max(1000),
         startDate: joi_1.default.date().optional(),
