@@ -82,7 +82,7 @@ const taskValidation = (data) => {
         _id: joi_1.default.string().optional(),
         listId: joi_1.default.string().required(),
         name: joi_1.default.string().required().max(255),
-        description: joi_1.default.string().optional().max(255),
+        description: joi_1.default.string().allow('').optional().max(255),
         assignedMembers: joi_1.default.array().items(joi_1.default.object({
             _id: joi_1.default.string().required(),
             username: joi_1.default.string().required(),
@@ -109,7 +109,7 @@ const taskUpdateValidation = (data) => {
         _id: joi_1.default.string().optional(),
         listId: joi_1.default.string().optional(),
         name: joi_1.default.string().optional().max(255),
-        description: joi_1.default.string().optional().max(255),
+        description: joi_1.default.string().allow('').optional().max(255),
         assignedMembers: joi_1.default.array().items(joi_1.default.object({
             _id: joi_1.default.string().required(),
             username: joi_1.default.string().required(),

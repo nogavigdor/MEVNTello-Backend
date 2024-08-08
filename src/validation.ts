@@ -98,7 +98,7 @@ const taskValidation = (data: TaskDocument) => {
         _id: Joi.string().optional(), 
         listId: Joi.string().required(),
         name: Joi.string().required().max(255),
-        description: Joi.string().optional().max(255),
+        description: Joi.string().allow('').optional().max(255),
         assignedMembers: Joi.array().items(
             Joi.object({
               _id: Joi.string().required(),
@@ -129,7 +129,7 @@ const taskUpdateValidation = (data: Partial<TaskDocument>) => {
         _id: Joi.string().optional(), 
         listId: Joi.string().optional(),
         name: Joi.string().optional().max(255),
-        description: Joi.string().optional().max(255),
+        description: Joi.string().allow('').optional().max(255),
         assignedMembers: Joi.array().items(
             Joi.object({
               _id: Joi.string().required(),
