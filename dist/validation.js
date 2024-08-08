@@ -46,7 +46,7 @@ const projectUpdateValidation = (data) => {
         })).min(1).optional(),
         lists: joi_1.default.array().items(joi_1.default.string()).optional(),
         createdAt: joi_1.default.date().optional(),
-        updatedAt: joi_1.default.date().optional()
+        updatedAt: joi_1.default.date().optional(),
     }).min(1);
     return schema.validate(data);
 };

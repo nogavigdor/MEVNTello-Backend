@@ -18,6 +18,11 @@ const router = express.Router();
 router.get('/', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
     try {
+
+        // Ensure the user ID is available from the token
+        if (!customReq.user || !customReq.user._id) {
+            return res.status(400).json({ message: 'User ID not found in request' });
+        }
         const tasks = await Task.find({ assignedMembers: customReq.user._id });
         res.json(tasks);
     } catch (err: unknown) {

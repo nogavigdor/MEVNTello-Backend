@@ -60,7 +60,7 @@ const projectUpdateValidation = (data: Partial<ProjectDocument>) => {
         ).min(1).optional(),
         lists : Joi.array().items(Joi.string()).optional(),
         createdAt: Joi.date().optional(),
-        updatedAt: Joi.date().optional()
+        updatedAt: Joi.date().optional(),
     }).min(1);
 
     return schema.validate(data);

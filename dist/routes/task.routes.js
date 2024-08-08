@@ -16,6 +16,10 @@ const router = express_1.default.Router();
 router.get('/', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
     try {
+        // Ensure the user ID is available from the token
+        if (!customReq.user || !customReq.user._id) {
+            return res.status(400).json({ message: 'User ID not found in request' });
+        }
         const tasks = await task_1.default.find({ assignedMembers: customReq.user._id });
         res.json(tasks);
     }
