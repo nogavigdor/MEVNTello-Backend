@@ -29,7 +29,6 @@ exports.taskSchema = new mongoose_1.Schema({
     },
     description: {
         type: String,
-        required: true,
         minlength: 0,
         maxlength: 255,
     },
@@ -37,7 +36,7 @@ exports.taskSchema = new mongoose_1.Schema({
     hoursAllocated: {
         type: Number,
         required: true,
-        min: 1,
+        min: 0,
     },
     hoursUsed: {
         type: Number,

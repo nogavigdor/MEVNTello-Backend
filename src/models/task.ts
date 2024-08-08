@@ -35,7 +35,6 @@ export const taskSchema = new Schema<TaskDocument>(
         },
         description: {
         type: String,
-        required: true,
         minlength: 0,
         maxlength: 255,
         },
@@ -43,7 +42,7 @@ export const taskSchema = new Schema<TaskDocument>(
         hoursAllocated: {
         type: Number,
         required: true,
-        min: 1,
+        min: 0,
         },
         hoursUsed: {
         type: Number,
