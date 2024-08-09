@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { TeamMember } from './ITeamMember';
+import { AssignedMember } from './IAssignedMember';
 import ISubTask from './ISubTask';
 
 
@@ -8,7 +8,7 @@ import ISubTask from './ISubTask';
         listId: Types.ObjectId;
         name: string;
         description: string;
-        assignedMembers: TeamMember[]; 
+        assignedMembers: AssignedMember[]; 
         hoursAllocated: number;
         hoursUsed: number;
         status: 'todo' | 'inProgress' | 'done';
