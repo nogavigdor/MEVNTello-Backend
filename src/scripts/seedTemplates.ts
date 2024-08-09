@@ -2,29 +2,37 @@ import mongoose from 'mongoose';
 import TaskTemplate from '../models/taskTemplate';
 import * as dotenv from 'dotenv';
 
-dotenv.config();
+
+//dotenv.config();
+// Load the .env.production file
+// Load the .env.production file
+dotenv.config({ path: '../.env.production' });
+
 
 const templates = [
   {
     name: 'Software Development',
     lists: [
       {
-        name: 'To Do',
+        name: 'Planning',
         tasks: [
           { name: 'Setup Development Environment' },
           { name: 'Requirement Analysis' },
         ],
       },
       {
-        name: 'In Progress',
+        name: 'Development',
         tasks: [
           { name: 'Develop Feature A' },
           { name: 'Develop Feature B' },
         ],
       },
       {
-        name: 'Done',
-        tasks: [],
+        name: 'Testing',
+        tasks: [
+          { name: 'Unit Tests' },
+          { name: 'Integration Tests' },
+        ],
       },
     ],
   },
