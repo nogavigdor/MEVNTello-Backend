@@ -23,7 +23,13 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
         if (!customReq.user || !customReq.user._id) {
             return res.status(400).json({ message: 'User ID not found in request' });
         }
-        const tasks = await Task.find({ assignedMembers: customReq.user._id });
+       // Query to find tasks where the assignedMembers array contains the user ID
+       const tasks = await Task.find({
+        assignedMembers: {
+            $elemMatch: { _id: customReq.user._id }
+        }
+    });
+
         res.json(tasks);
     } catch (err: unknown) {
         if (err instanceof Error) {

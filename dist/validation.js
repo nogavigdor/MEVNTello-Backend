@@ -115,6 +115,8 @@ const taskUpdateValidation = (data) => {
             _id: joi_1.default.string().required(),
             username: joi_1.default.string().required(),
             role: joi_1.default.string().valid('leader', 'member').required(),
+            allocatedHours: joi_1.default.number().optional().min(0),
+            usedHours: joi_1.default.number().optional().min(0),
         })).optional(),
         hoursAllocated: joi_1.default.number().optional().min(0),
         hoursUsed: joi_1.default.number().optional().min(0),
