@@ -136,6 +136,8 @@ const taskUpdateValidation = (data: Partial<TaskDocument>) => {
               _id: Joi.string().required(),
               username: Joi.string().required(),
               role: Joi.string().valid('leader', 'member').required(),
+              allocatedHours: Joi.number().optional().min(0),
+              usedHours: Joi.number().optional().min(0),
             })
         ).optional(),
         hoursAllocated: Joi.number().optional().min(0),
