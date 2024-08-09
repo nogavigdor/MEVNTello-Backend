@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv';
 //dotenv.config();
 // Load the .env.production file
 // Load the .env.production file
-dotenv.config({ path: '../.env.production' });
+//dotenv.config({ path: '../.env.production' });
 
 
 const templates = [
@@ -89,9 +89,10 @@ const templates = [
   },
 ];
 
+const DBHOST = 'mongodb+srv://nogavigdor:Easv365@cluster0.4lslicv.mongodb.net/mevntello_db_prod?retryWrites=true&w=majority';
 async function seedTemplates() {
   try {
-    await mongoose.connect(process.env.DBHOST as string, {
+    await mongoose.connect(DBHOST as string, {
       //useNewUrlParser: true,
      // useUnifiedTopology: true,
     });

@@ -90,7 +90,7 @@ console.log('Stored password hash:', user.password);
 router.get('/me', verifyToken as RequestHandler, async (req, res) => {
   try {
     const customReq = req as CustomRequest;
-    const user = await User.findById(customReq.user._id, '_id username email');
+    const user = await User.findById(customReq.user._id, '_id username role email');
     if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (err: any) {

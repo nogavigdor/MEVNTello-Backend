@@ -76,7 +76,7 @@ router.post("/login", async (req, res) => {
 router.get('/me', middleware_1.verifyToken, async (req, res) => {
     try {
         const customReq = req;
-        const user = await user_1.default.findById(customReq.user._id, '_id username email');
+        const user = await user_1.default.findById(customReq.user._id, '_id username role email');
         if (!user)
             return res.status(404).json({ message: 'User not found' });
         res.json(user);
