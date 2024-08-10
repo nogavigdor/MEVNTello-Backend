@@ -14,7 +14,7 @@ const router = express_1.default.Router();
 router.get("/", middleware_1.verifyToken, async (req, res) => {
     try {
         // Use MongoDB projection to select only the _id, username, and email fields
-        const users = await user_1.default.find({}, '_id username email').exec();
+        const users = await user_1.default.find({}, '_id username email role').exec();
         res.json(users);
     }
     catch (err) {
@@ -69,7 +69,7 @@ router.post("/login", async (req, res) => {
     res.header("auth-token", token).json({
         //include the token and user data in the response
         token,
-        user: { _id: user._id, username: user.username, email: user.email },
+        user: { _id: user._id, username: user.username, email: user.email, role: user.role },
     });
 });
 // Authenticated User Details Route
