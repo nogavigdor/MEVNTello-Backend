@@ -8,6 +8,8 @@ const middleware_1 = require("../middleware");
 const validation_1 = require("../validation");
 const validation_2 = require("../validation");
 const project_1 = __importDefault(require("../models/project"));
+const list_1 = __importDefault(require("../models/list"));
+const task_1 = __importDefault(require("../models/task"));
 const router = express_1.default.Router();
 // Get all projects
 router.get('/', middleware_1.verifyToken, async (req, res) => {
@@ -129,10 +131,25 @@ router.put('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, 
 // Delete a project (id is the project ID)
 router.delete('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, res) => {
     try {
-        const removedProject = await project_1.default.findByIdAndDelete(req.params.id);
-        if (!removedProject)
+        // Fetch the project by ID
+        const project = await project_1.default.findById(req.params.id);
+        if (!project) {
             return res.status(404).json({ message: "Project not found" });
-        res.json({ message: "Project deleted" });
+        }
+        // Fetch the lists associated with the project
+        const lists = await list_1.default.find({ _id: { $in: project.lists } });
+        // Extract task IDs from all lists
+        const taskIds = [];
+        lists.forEach(list => {
+            taskIds.push(...list.tasks); // Collect all task IDs from each list
+        });
+        // Delete all tasks associated with the lists
+        await task_1.default.deleteMany({ _id: { $in: taskIds } });
+        // Delete all lists associated with the project
+        await list_1.default.deleteMany({ _id: { $in: project.lists } });
+        // Finally, delete the project
+        await project_1.default.findByIdAndDelete(req.params.id);
+        res.json({ message: "Project, associated lists, and tasks deleted successfully" });
     }
     catch (err) {
         if (err instanceof Error) {

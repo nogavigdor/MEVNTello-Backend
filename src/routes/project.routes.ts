@@ -5,6 +5,8 @@ import { projectUpdateValidation } from '../validation';
 import Project from '../models/project';
 import { RequestHandler } from 'express';
 import { CustomRequest } from '../interfaces/ICustomRequest';
+import List from '../models/list';
+import Task from '../models/task';
 
 const router = express.Router();
 
@@ -128,9 +130,31 @@ router.put('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => 
 // Delete a project (id is the project ID)
 router.delete('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => {
     try {
-        const removedProject = await Project.findByIdAndDelete(req.params.id);
-        if (!removedProject) return res.status(404).json({ message: "Project not found" });
-        res.json({ message: "Project deleted" });
+          // Fetch the project by ID
+          const project = await Project.findById(req.params.id);
+          if (!project) {
+              return res.status(404).json({ message: "Project not found" });
+          }
+  
+          // Fetch the lists associated with the project
+          const lists = await List.find({ _id: { $in: project.lists } });
+  
+          // Extract task IDs from all lists
+          const taskIds: string[] = [];
+          lists.forEach(list => {
+              taskIds.push(...list.tasks); // Collect all task IDs from each list
+          });
+  
+          // Delete all tasks associated with the lists
+          await Task.deleteMany({ _id: { $in: taskIds } });
+  
+          // Delete all lists associated with the project
+          await List.deleteMany({ _id: { $in: project.lists } });
+  
+          // Finally, delete the project
+          await Project.findByIdAndDelete(req.params.id);
+  
+          res.json({ message: "Project, associated lists, and tasks deleted successfully" });
     } catch (err: unknown) {
         if (err instanceof Error) {
             res.status(500).json({ message: err.message });
