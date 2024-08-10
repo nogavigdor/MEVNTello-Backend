@@ -5,6 +5,7 @@ import Project from '../models/project';
 import { listValidation } from '../validation';
 import { listUpdateValidation } from '../validation';
 import { CustomRequest } from '../interfaces/ICustomRequest';
+import Task from '../models/task';
 
 const router = express.Router();
 
@@ -168,6 +169,7 @@ router.delete('/:id', verifyToken as RequestHandler, async (req, res) => {
         const list = await List.findById(customReq.params.id);
         if (!list) return res.status(404).json({ message: 'List not found' });
 
+         // Retrieve the project ID from the list
         const projectId = list.projectId;
 
         // Check if the user is an admin
@@ -183,8 +185,13 @@ router.delete('/:id', verifyToken as RequestHandler, async (req, res) => {
             return res.status(403).json({ message: 'Access Denied: You are not authorized to delete this list' });
         }
 
+
+        // Delete the tasks associated with this list
+        await Task.deleteMany({ _id: { $in: list.tasks } });
+
         await List.findByIdAndDelete(customReq.params.id);
-        res.json({ message: 'List deleted' });
+
+        res.json({ message: 'List and its related tasks are deleted' });
     } catch (err: unknown) {
         if (err instanceof Error) {
             res.status(500).json({ message: err.message });
