@@ -14,7 +14,7 @@ const router = express.Router();
 router.get("/", verifyToken as RequestHandler, async (req, res) => {
   try {
     // Use MongoDB projection to select only the _id, username, and email fields
-    const users = await User.find({}, '_id username email').exec();
+    const users = await User.find({}, '_id username email role').exec();
     res.json(users);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
@@ -82,7 +82,7 @@ console.log('Stored password hash:', user.password);
   res.header("auth-token", token).json({
     //include the token and user data in the response
     token,
-    user: { _id: user._id, username: user.username, email: user.email }, 
+    user: { _id: user._id, username: user.username, email: user.email, role: user.role }, 
   });
 });
 
