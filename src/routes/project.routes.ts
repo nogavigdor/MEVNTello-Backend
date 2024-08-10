@@ -12,13 +12,22 @@ const router = express.Router();
 
 
 
-// Get all projects
+// Get all projects for the authenticated user
+// If the authenticated user is an admin, return all projects
+// If the authenticated user is not an admin, return only the projects where they are a team member
 router.get('/', verifyToken as RequestHandler, async (req, res) => {
     const customReq = req as CustomRequest;
     try {
-        const projects = await Project.find({
-            'teamMembers._id': customReq.user._id
-        });
+        let projects;
+        if (customReq.user.role === 'admin') {
+            // If the user is an admin, return all projects
+            projects = await Project.find();
+        } else {
+            // Otherwise, filter projects by the user's ID
+            projects = await Project.find({
+                'teamMembers._id': customReq.user._id
+            });
+        }
         res.json(projects);
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -29,7 +38,9 @@ router.get('/', verifyToken as RequestHandler, async (req, res) => {
     }
 });
 
-//Get all projects for a specific user
+
+// Get all projects for a specific user by their ID
+// The user ID is passed as a parameter in the URL
 router.get('/user/:id', verifyToken as RequestHandler, async (req, res) => {
     try {
         console.log('Route /user/:id matched');
