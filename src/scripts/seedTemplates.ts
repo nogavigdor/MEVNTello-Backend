@@ -10,7 +10,7 @@ import * as dotenv from 'dotenv';
 
 
 const templates = [
-  {
+  /*{
     name: 'Software Development',
     lists: [
       {
@@ -87,6 +87,13 @@ const templates = [
       },
     ],
   },
+  */
+  {
+    name: 'Blank Template',
+    lists: [
+     
+    ],
+  }
 ];
 
 const DBHOST = 'mongodb+srv://nogavigdor:Easv365@cluster0.4lslicv.mongodb.net/mevntello_db_prod?retryWrites=true&w=majority';
@@ -100,8 +107,8 @@ async function seedTemplates() {
     console.log('Connected to MongoDB');
 
     // Clear the collection first
-    await TaskTemplate.deleteMany({});
-    console.log('Cleared existing templates');
+    // await TaskTemplate.deleteMany({});
+    // console.log('Cleared existing templates');
 
     const result = await TaskTemplate.insertMany(templates);
     console.log('Templates seeded successfully:', result);
