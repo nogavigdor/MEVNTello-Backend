@@ -9,6 +9,7 @@ const list_1 = __importDefault(require("../models/list"));
 const project_1 = __importDefault(require("../models/project"));
 const validation_1 = require("../validation");
 const validation_2 = require("../validation");
+const task_1 = __importDefault(require("../models/task"));
 const router = express_1.default.Router();
 // Get all lists for a project (id is the project ID)
 router.get('/project/:id', middleware_1.verifyToken, async (req, res) => {
@@ -154,6 +155,7 @@ router.delete('/:id', middleware_1.verifyToken, async (req, res) => {
         const list = await list_1.default.findById(customReq.params.id);
         if (!list)
             return res.status(404).json({ message: 'List not found' });
+        // Retrieve the project ID from the list
         const projectId = list.projectId;
         // Check if the user is an admin
         const isAdmin = customReq.user.role === 'admin';
@@ -165,8 +167,10 @@ router.delete('/:id', middleware_1.verifyToken, async (req, res) => {
         if (!isAdmin && !isLeader) {
             return res.status(403).json({ message: 'Access Denied: You are not authorized to delete this list' });
         }
+        // Delete the tasks associated with this list
+        await task_1.default.deleteMany({ _id: { $in: list.tasks } });
         await list_1.default.findByIdAndDelete(customReq.params.id);
-        res.json({ message: 'List deleted' });
+        res.json({ message: 'List and its related tasks are deleted' });
     }
     catch (err) {
         if (err instanceof Error) {

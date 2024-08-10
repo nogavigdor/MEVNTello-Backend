@@ -233,6 +233,10 @@ router.delete('/:id', verifyToken as RequestHandler, async (req, res, next) => {
             return res.status(403).json({ message: 'Access Denied: You are not authorized to delete this task' });
         }
 
+           // Remove the task reference from the list
+           list.tasks = list.tasks.filter(taskId => taskId.toString() !== req.params.id);
+           await list.save();
+
         const removedTask = await Task.findByIdAndDelete(req.params.id);
         if (!removedTask) return res.status(404).json({ message: "Task not found" });
         res.json({ message: "Task deleted" });
