@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
     const validPass = await bcrypt_1.default.compare(req.body.password, user.password);
     if (!validPass)
         return res.status(400).json({ message: "Invalid password" });
-    const token = jsonwebtoken_1.default.sign({ _id: user._id, username: user.username, email: user.email }, process.env.TOKEN_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+    const token = jsonwebtoken_1.default.sign({ _id: user._id, username: user.username, email: user.email, role: user.role }, process.env.TOKEN_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
     console.log('Generated token:', token);
     console.log('User data:', { _id: user._id, username: user.username, email: user.email });
     res.header("auth-token", token).json({

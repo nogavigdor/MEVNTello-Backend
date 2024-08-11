@@ -11,13 +11,23 @@ const project_1 = __importDefault(require("../models/project"));
 const list_1 = __importDefault(require("../models/list"));
 const task_1 = __importDefault(require("../models/task"));
 const router = express_1.default.Router();
-// Get all projects
+// Get all projects for the authenticated user
+// If the authenticated user is an admin, return all projects
+// If the authenticated user is not an admin, return only the projects where they are a team member
 router.get('/', middleware_1.verifyToken, async (req, res) => {
     const customReq = req;
     try {
-        const projects = await project_1.default.find({
-            'teamMembers._id': customReq.user._id
-        });
+        let projects;
+        if (customReq.user.role === 'admin') {
+            // If the user is an admin, return all projects
+            projects = await project_1.default.find();
+        }
+        else {
+            // Otherwise, filter projects by the user's ID
+            projects = await project_1.default.find({
+                'teamMembers._id': customReq.user._id
+            });
+        }
         res.json(projects);
     }
     catch (err) {
@@ -29,7 +39,8 @@ router.get('/', middleware_1.verifyToken, async (req, res) => {
         }
     }
 });
-//Get all projects for a specific user
+// Get all projects for a specific user by their ID
+// The user ID is passed as a parameter in the URL
 router.get('/user/:id', middleware_1.verifyToken, async (req, res) => {
     try {
         console.log('Route /user/:id matched');
@@ -49,7 +60,7 @@ router.get('/user/:id', middleware_1.verifyToken, async (req, res) => {
     }
 });
 // Get a specific project (id is the project ID)
-router.get('/:id', middleware_1.verifyToken, middleware_1.isMemberOrLeader, async (req, res) => {
+router.get('/:id', middleware_1.verifyToken, middleware_1.isAdmin, middleware_1.isMemberOrLeader, async (req, res) => {
     try {
         const project = await project_1.default.findById(req.params.id);
         if (!project)
@@ -109,7 +120,11 @@ router.post('/', middleware_1.verifyToken, async (req, res) => {
     }
 });
 // Update a project (id is the project ID)
-router.put('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, res) => {
+router.put('/:id', middleware_1.verifyToken, async (req, res) => {
+    const customReq = req;
+    if (customReq.user.role !== 'admin') {
+        await (0, middleware_1.isLeader)(req, res, async () => { }); // Only call isLeader middleware if not admin
+    }
     const { error } = (0, validation_2.projectUpdateValidation)(req.body);
     if (error)
         return res.status(400).json({ message: error.details[0].message });
@@ -129,25 +144,23 @@ router.put('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, 
     }
 });
 // Delete a project (id is the project ID)
-router.delete('/:id', middleware_1.verifyToken, middleware_1.isLeader, async (req, res) => {
+router.delete('/:id', middleware_1.verifyToken, async (req, res) => {
+    const customReq = req;
+    if (customReq.user.role !== 'admin') {
+        await (0, middleware_1.isLeader)(req, res, async () => { }); // Only call isLeader middleware if not admin
+    }
     try {
-        // Fetch the project by ID
         const project = await project_1.default.findById(req.params.id);
         if (!project) {
             return res.status(404).json({ message: "Project not found" });
         }
-        // Fetch the lists associated with the project
         const lists = await list_1.default.find({ _id: { $in: project.lists } });
-        // Extract task IDs from all lists
         const taskIds = [];
         lists.forEach(list => {
-            taskIds.push(...list.tasks); // Collect all task IDs from each list
+            taskIds.push(...list.tasks);
         });
-        // Delete all tasks associated with the lists
         await task_1.default.deleteMany({ _id: { $in: taskIds } });
-        // Delete all lists associated with the project
         await list_1.default.deleteMany({ _id: { $in: project.lists } });
-        // Finally, delete the project
         await project_1.default.findByIdAndDelete(req.params.id);
         res.json({ message: "Project, associated lists, and tasks deleted successfully" });
     }

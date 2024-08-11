@@ -89,14 +89,22 @@ const isProjectMember: RequestHandler = async (req, res, next) => {
 
 // Check if the user is a team member or leader (only for project routes)
 const isMemberOrLeader: RequestHandler = async (req, res, next) => {
-    const projectId = req.params.id || req.body.projectId; // Adjust to ensure it checks both params and body
+    const customReq = req as CustomRequest;
+
+    // First, allow admins to bypass the check
+    if (customReq.user.role === 'admin') {
+        return next();
+    }
+
+    const projectId = req.params.id || req.body.projectId;
     const project = await Project.findById(projectId);
 
     if (!project) {
         return res.status(404).json({ message: "Project not found" });
     }
-    //checks if the user is a member or leader
-    const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === (req as CustomRequest).user._id);
+
+    // Check if the user is a member or leader
+    const isMemberOrLeader = project.teamMembers.some(member => member._id.toString() === customReq.user._id);
 
     if (!isMemberOrLeader) {
         return res.status(403).json({ message: 'Access Denied: You are not a team member of this project' });

@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken, isLeader, isProjectMember, isMemberOrLeader } from '../middleware';
+import { verifyToken, isAdmin, isLeader, isProjectMember, isMemberOrLeader } from '../middleware';
 import { projectValidation } from '../validation';
 import { projectUpdateValidation } from '../validation';
 import Project from '../models/project';
@@ -59,7 +59,7 @@ router.get('/user/:id', verifyToken as RequestHandler, async (req, res) => {
 });
 
 // Get a specific project (id is the project ID)
-router.get('/:id', verifyToken as RequestHandler, isMemberOrLeader as RequestHandler, async (req, res) => {
+router.get('/:id', verifyToken as RequestHandler, isAdmin, isMemberOrLeader as RequestHandler, async (req, res) => {
     try {
         const project = await Project.findById(req.params.id);
         if (!project) return res.status(404).json({ message: "Project not found" });
@@ -121,7 +121,13 @@ router.post('/', verifyToken as RequestHandler, async (req, res) => {
 });
 
 // Update a project (id is the project ID)
-router.put('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => {
+router.put('/:id', verifyToken as RequestHandler, async (req, res) => {
+    const customReq = req as CustomRequest;
+    
+    if (customReq.user.role !== 'admin') {
+        await isLeader(req, res, async () => {}); // Only call isLeader middleware if not admin
+    }
+
     const { error } = projectUpdateValidation(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
@@ -138,34 +144,33 @@ router.put('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => 
     }
 });
 
+
 // Delete a project (id is the project ID)
-router.delete('/:id', verifyToken as RequestHandler, isLeader, async (req, res) => {
+router.delete('/:id', verifyToken as RequestHandler, async (req, res) => {
+    const customReq = req as CustomRequest;
+    
+    if (customReq.user.role !== 'admin') {
+        await isLeader(req, res, async () => {}); // Only call isLeader middleware if not admin
+    }
+
     try {
-          // Fetch the project by ID
-          const project = await Project.findById(req.params.id);
-          if (!project) {
-              return res.status(404).json({ message: "Project not found" });
-          }
-  
-          // Fetch the lists associated with the project
-          const lists = await List.find({ _id: { $in: project.lists } });
-  
-          // Extract task IDs from all lists
-          const taskIds: string[] = [];
-          lists.forEach(list => {
-              taskIds.push(...list.tasks); // Collect all task IDs from each list
-          });
-  
-          // Delete all tasks associated with the lists
-          await Task.deleteMany({ _id: { $in: taskIds } });
-  
-          // Delete all lists associated with the project
-          await List.deleteMany({ _id: { $in: project.lists } });
-  
-          // Finally, delete the project
-          await Project.findByIdAndDelete(req.params.id);
-  
-          res.json({ message: "Project, associated lists, and tasks deleted successfully" });
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+
+        const lists = await List.find({ _id: { $in: project.lists } });
+
+        const taskIds: string[] = [];
+        lists.forEach(list => {
+            taskIds.push(...list.tasks);
+        });
+
+        await Task.deleteMany({ _id: { $in: taskIds } });
+        await List.deleteMany({ _id: { $in: project.lists } });
+        await Project.findByIdAndDelete(req.params.id);
+
+        res.json({ message: "Project, associated lists, and tasks deleted successfully" });
     } catch (err: unknown) {
         if (err instanceof Error) {
             res.status(500).json({ message: err.message });

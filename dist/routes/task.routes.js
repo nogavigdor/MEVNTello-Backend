@@ -107,7 +107,7 @@ router.get('/project/:id', middleware_1.verifyToken, async (req, res) => {
     }
 });
 // Create a new task (only by project leaders or admins)
-router.post('/:listId', middleware_1.verifyToken, middleware_1.isAdmin, async (req, res, next) => {
+router.post('/:listId', middleware_1.verifyToken, async (req, res, next) => {
     const customReq = req;
     const listId = req.params.listId;
     try {
@@ -117,10 +117,13 @@ router.post('/:listId', middleware_1.verifyToken, middleware_1.isAdmin, async (r
         const project = await project_1.default.findById(list.projectId);
         if (!project)
             return res.status(404).json({ message: 'Project not found' });
-        //checks if the user is a member or leader
-        const isLeader = project.teamMembers.some(member => member.role === 'leader' && member._id.toString() === customReq.user._id);
-        if (!isLeader) {
-            return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
+        // Allow admin users to bypass the leader check
+        if (customReq.user.role !== 'admin') {
+            //checks if the user is a member or leader
+            const isLeader = project.teamMembers.some(member => member.role === 'leader' && member._id.toString() === customReq.user._id);
+            if (!isLeader) {
+                return res.status(403).json({ message: 'Access Denied: You are not the leader of this project' });
+            }
         }
         const { error } = (0, validation_1.taskValidation)(req.body);
         if (error)
