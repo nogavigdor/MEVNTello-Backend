@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: MEVNtello Trello/Kanban-like API
-  description: A Project Management API using Node.js, Express, MongoDB, and TypeScript. Combines the best features of Trello and Kanban.
+  title: MEVN Tello API
+  description: A Trello-like project management API
   version: 1.0.0
   contact:
     name: Noga Vigdor
@@ -39,13 +39,6 @@ components:
     Project:
       type: object
       properties:
-        _id:
-          type: string
-        creationStatus:
-          type: string
-          enum: [tasks, management, complete]
-        selectedTemplate:
-          type: string
         name:
           type: string
         description:
@@ -58,16 +51,12 @@ components:
           format: date
         allocatedHours:
           type: number
-        creator:
-          type: string
         teamMembers:
           type: array
           items:
             type: object
             properties:
               _id:
-                type: string
-              username:
                 type: string
               role:
                 type: string
@@ -79,8 +68,6 @@ components:
     List:
       type: object
       properties:
-        _id:
-          type: string
         name:
           type: string
         projectId:
@@ -92,8 +79,6 @@ components:
     Task:
       type: object
       properties:
-        _id:
-          type: string
         listId:
           type: string
         name:
@@ -103,19 +88,7 @@ components:
         assignedMembers:
           type: array
           items:
-            type: object
-            properties:
-              _id:
-                type: string
-              username:
-                type: string
-              role:
-                type: string
-                enum: [leader, member]
-              allocatedHours:
-                type: number
-              usedHours:
-                type: number
+            type: string
         hoursAllocated:
           type: number
         hoursUsed:
@@ -128,8 +101,6 @@ components:
           items:
             type: object
             properties:
-              _id:
-                type: string
               name:
                 type: string
               completed:
@@ -137,35 +108,10 @@ components:
     SubTask:
       type: object
       properties:
-        _id:
-          type: string
         name:
           type: string
         completed:
           type: boolean
-    TaskTemplate:
-      type: object
-      properties:
-        _id:
-          type: string
-        name:
-          type: string
-        lists:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              tasks:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    description:
-                      type: string
 paths:
   /users:
     get:
@@ -189,7 +135,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
       responses:
         '201':
           description: User created successfully
@@ -239,7 +192,31 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Project'
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+                allocatedHours:
+                  type: number
+                teamMembers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      role:
+                        type: string
+                        enum: [leader, member]
+           
       responses:
         '201':
           description: Project created successfully
@@ -282,7 +259,30 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Project'
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                startDate:
+                  type: string
+                  format: date
+                endDate:
+                  type: string
+                  format: date
+                allocatedHours:
+                  type: number
+                teamMembers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      role:
+                        type: string
+                        enum: [leader, member]
       responses:
         '200':
           description: Project updated successfully
@@ -331,29 +331,18 @@ paths:
           description: User not found
         '500':
           description: Server error
-  /lists/project/{id}:
+  /lists:
     get:
-      summary: Get all lists for a project
+      summary: Get all lists
       tags:
         - List
       security:
         - ApiKeyAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: Successfully retrieved lists
-        '404':
-          description: Project not found
-        '403':
-          description: Access Denied
         '500':
           description: Server error
-  /lists:
     post:
       summary: Create a new list
       tags:
@@ -365,7 +354,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/List'
+              type: object
+              properties:
+                name:
+                  type: string
+                projectId:
+                  type: string
+                tasks:
+                  type: array
+                  items:
+                    type: string
       responses:
         '201':
           description: List created successfully
@@ -389,8 +387,6 @@ paths:
           description: Successfully retrieved list
         '404':
           description: List not found
-        '403':
-          description: Access Denied
         '500':
           description: Server error
     put:
@@ -410,7 +406,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/List'
+              type: object
+              properties:
+                name:
+                  type: string
+                projectId:
+                  type: string
+                tasks:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: List updated successfully
@@ -418,8 +423,6 @@ paths:
           description: Bad request
         '404':
           description: List not found
-        '403':
-          description: Access Denied
         '500':
           description: Server error
     delete:
@@ -439,13 +442,11 @@ paths:
           description: List deleted successfully
         '404':
           description: List not found
-        '403':
-          description: Access Denied
         '500':
           description: Server error
   /tasks:
     get:
-      summary: Get all tasks assigned to the authenticated user
+      summary: Get all tasks
       tags:
         - Task
       security:
@@ -455,9 +456,57 @@ paths:
           description: Successfully retrieved tasks
         '500':
           description: Server error
-  /tasks/list/{id}:
+    post:
+      summary: Create a new task
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: string
+                  description: The ID of the project
+                listId:
+                  type: string
+                  description: The ID of the list
+                name:
+                  type: string
+                  description: The name of the task
+                description:
+                  type: string
+                  description: The description of the task
+                assignedMembers:
+                  type: array
+                  items:
+                    type: string
+                    description: The ID of the assigned members
+                hoursAllocated:
+                  type: number
+                  description: The allocated hours for the task
+                hoursUsed:
+                  type: number
+                  description: The used hours for the task
+                status:
+                  type: string
+                  enum: ["todo", "inProgress", "done"]
+                  description: The status of the task
+      responses:
+        '201':
+          description: Task created successfully
+        '400':
+          description: Bad request
+        '401':
+          description: Access denied
+        '500':
+          description: Internal server error
     get:
-      summary: Get all tasks for a specific list
+      summary: Get a task by ID
       tags:
         - Task
       security:
@@ -470,36 +519,11 @@ paths:
             type: string
       responses:
         '200':
-          description: Successfully retrieved tasks
+          description: Successfully retrieved task
         '404':
-          description: List not found
-        '403':
-          description: Access Denied
+          description: Task not found
         '500':
           description: Server error
-  /tasks/project/{id}:
-    get:
-      summary: Get all tasks for a specific project
-      tags:
-        - Task
-      security:
-        - ApiKeyAuth: []
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successfully retrieved tasks
-        '404':
-          description: Project not found
-        '403':
-          description: Access Denied
-        '500':
-          description: Server error
-  /tasks/{taskId}:
     put:
       summary: Update a task
       tags:
@@ -507,7 +531,7 @@ paths:
       security:
         - ApiKeyAuth: []
       parameters:
-        - name: taskId
+        - name: id
           in: path
           required: true
           schema:
@@ -517,7 +541,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Task'
+              type: object
+              properties:
+                listId:
+                  type: string
+                name:
+                  type: string
+                description:
+                  type: string
+                assignedMembers:
+                  type: array
+                  items:
+                    type: string
+                hoursAllocated:
+                  type: number
+                hoursUsed:
+                  type: number
+                status:
+                  type: string
+                  enum: [todo, inProgress, done]
+                subTasks:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      completed:
+                        type: boolean
       responses:
         '200':
           description: Task updated successfully
@@ -525,8 +576,6 @@ paths:
           description: Bad request
         '404':
           description: Task not found
-        '403':
-          description: Access Denied
         '500':
           description: Server error
     delete:
@@ -536,7 +585,7 @@ paths:
       security:
         - ApiKeyAuth: []
       parameters:
-        - name: taskId
+        - name: id
           in: path
           required: true
           schema:
@@ -546,34 +595,8 @@ paths:
           description: Task deleted successfully
         '404':
           description: Task not found
-        '403':
-          description: Access Denied
         '500':
           description: Server error
-  /tasks/{listId}:
-    post:
-      summary: Create a new task
-      tags:
-        - Task
-      security:
-        - ApiKeyAuth: []
-      parameters:
-        - name: listId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Task'
-      responses:
-        '201':
-          description: Task created successfully
-        '400':
-          description: Bad request
   /tasks/{taskId}/subtasks:
     post:
       summary: Create a new subtask
@@ -592,14 +615,19 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubTask'
+              type: object
+              properties:
+                name:
+                  type: string
+                completed:
+                  type: boolean
       responses:
         '201':
           description: Subtask created successfully
         '400':
           description: Bad request
     get:
-      summary: Get all subtasks for a task
+      summary: Get all subtasks
       tags:
         - Task
       security:
@@ -640,7 +668,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubTask'
+              type: object
+              properties:
+                name:
+                  type: string
+                completed:
+                  type: boolean
       responses:
         '200':
           description: Subtask updated successfully
@@ -674,7 +707,7 @@ paths:
           description: Subtask not found
         '500':
           description: Server error
-  /tasks/templates:
+  /taskTemplates:
     get:
       summary: Get all task templates
       tags:
@@ -697,13 +730,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TaskTemplate'
+              type: object
+              properties:
+                name:
+                  type: string
+                lists:
+                  type: array
+                  items:
+                    type: string
       responses:
         '201':
           description: Task template created successfully
         '400':
           description: Bad request
-  /tasks/templates/{id}:
+  /taskTemplates/{id}:
     get:
       summary: Get a task template by ID
       tags:
@@ -740,7 +780,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TaskTemplate'
+              type: object
+              properties:
+                name:
+                  type: string
+                lists:
+                  type: array
+                  items:
+                    type: string
       responses:
         '200':
           description: Task template updated successfully

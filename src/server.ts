@@ -41,7 +41,7 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "MENtell Trello/Kanban-like API",
+      title: "MEVNtell Trello/Kanban-like API",
       description: "A Project Managemetnt API using Node.js, Express, MongoDB and TypeScript. Combines best worlds of Trello and Kababan",
       version: "1.0.0",
       contact: {
